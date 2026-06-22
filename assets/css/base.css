@@ -428,22 +428,13 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .post-rail{
   position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:55;
   display:flex;flex-direction:column;gap:.15rem;
-  padding:.45rem .4rem .45rem .9rem;border-radius:10px;
+  padding:.45rem .4rem;border-radius:10px;
   max-height:40vh;overflow-y:auto;line-height:1;
   background:rgba(13,10,26,.55);border:1px solid var(--line);
   backdrop-filter:blur(6px);
 }
 .post-rail::-webkit-scrollbar{width:4px}
 .post-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:2px}
-.rail-track{
-  position:absolute;left:4px;top:.55rem;bottom:.55rem;width:2px;
-  background:var(--line-strong);border-radius:2px;overflow:hidden;
-}
-.rail-fill{
-  position:absolute;inset:0;background:var(--accent);
-  transform-origin:top center;transform:scaleY(0);
-  transition:transform .25s ease;
-}
 .rail-item{
   position:relative;display:flex;align-items:center;
   width:44px;height:8px;padding:0;border:0;background:none;cursor:pointer;flex:none;line-height:1;

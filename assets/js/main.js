@@ -886,14 +886,10 @@ function buildPostRail(view, headings) {
   if (railObserver) { railObserver.disconnect(); railObserver = null; }
   if (headings.length < 2 || currentRoute() !== "/journal") { rail.hidden = true; rail.innerHTML = ""; return; }
 
-  rail.innerHTML = `
-    <div class="rail-track" aria-hidden="true"><div class="rail-fill"></div></div>
-    ${headings.map((h) => `
-      <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" data-label="${escapeAttr(h.textContent)}" aria-label="${escapeAttr(h.textContent)}"></button>
-    `).join("")}
-  `;
+  rail.innerHTML = headings.map((h) => `
+    <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" data-label="${escapeAttr(h.textContent)}" aria-label="${escapeAttr(h.textContent)}"></button>
+  `).join("");
   rail.hidden = false;
-  const fill = $(".rail-fill", rail);
 
   const tip = $("#rail-tooltip");
   $$(".rail-item", rail).forEach((b) => {
@@ -917,16 +913,7 @@ function buildPostRail(view, headings) {
   const setActive = (id) => {
     if (id === lastId) return;
     lastId = id;
-    let idx = 0;
-    items.forEach((b, i) => {
-      const on = b.dataset.id === id;
-      b.classList.toggle("active", on);
-      if (on) idx = i;
-    });
-    if (fill && items.length > 1) {
-      const pct = (idx / (items.length - 1)) * 100;
-      fill.style.transform = `scaleY(${pct / 100})`;
-    }
+    items.forEach((b) => b.classList.toggle("active", b.dataset.id === id));
   };
 
   const ANCHOR = 140;
