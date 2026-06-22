@@ -42,6 +42,14 @@ gsap.ticker.lagSmoothing(0);
 const topbar = $(".topbar");
 lenis.on("scroll", ({ scroll }) => topbar.classList.toggle("scrolled", scroll > 4));
 
+/* ===== Back-to-top button ===== */
+const toTop = $("#to-top");
+lenis.on("scroll", ({ scroll }) => {
+  if (scroll > 600) { toTop.hidden = false; toTop.classList.add("show"); }
+  else              { toTop.classList.remove("show"); setTimeout(() => { if (!toTop.classList.contains("show")) toTop.hidden = true; }, 200); }
+});
+toTop.addEventListener("click", () => lenis.scrollTo(0, { duration: 0.7 }));
+
 /* ===== Loader ===== */
 gsap.to(".loader .bar", { width: "100%", duration: 0.7, ease: "power3.out" });
 gsap.to(".loader", { autoAlpha: 0, duration: 0.4, delay: 0.85 });
@@ -792,6 +800,15 @@ function renderJournalList() {
   const target = activePostId && posts.find((p) => p.id === activePostId) ? activePostId : posts[0].id;
   openPost(target);
 }
+function slugify(s) {
+  return String(s).toLowerCase().trim()
+    .replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 80);
+}
+function readingTime(text) {
+  const words = String(text || "").trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 220));
+}
+
 async function openPost(id) {
   activePostId = id;
   $$("#journal-list .post-item").forEach((x) => x.classList.toggle("active", x.dataset.id === id));
@@ -799,14 +816,44 @@ async function openPost(id) {
   const view = $("#journal-view");
   if (!post) { view.innerHTML = `<p class="muted">Post not found.</p>`; return; }
   const { marked } = await import("marked");
+  const html = marked.parse(post.body || "");
+  const mins = readingTime(post.body);
+
+  // build TOC from h2/h3
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const headings = [...tmp.querySelectorAll("h2, h3")];
+  const slugSeen = {};
+  headings.forEach((h) => {
+    let s = slugify(h.textContent);
+    if (slugSeen[s]) { slugSeen[s]++; s = `${s}-${slugSeen[s]}`; } else slugSeen[s] = 1;
+    h.id = s;
+  });
+  const showToc = headings.length >= 3;
+  const tocHTML = showToc
+    ? `<nav class="post-toc" aria-label="On this page"><strong>On this page</strong><ol>${
+        headings.map((h) => `<li class="lvl-${h.tagName.toLowerCase()}"><a href="#${h.id}">${escapeHtml(h.textContent)}</a></li>`).join("")
+      }</ol></nav>`
+    : "";
+
   view.innerHTML = `
     ${window.__isOwner ? `<div class="post-actions">
       <button class="btn ghost sm" id="post-edit">Edit</button>
       <button class="btn danger sm" id="post-del">Delete</button>
     </div>` : ``}
-    <p class="post-date">${escapeHtml(post.date || "")}</p>
-    ${marked.parse(post.body || "")}
+    <p class="post-meta-line"><span>${escapeHtml(post.date || "")}</span><span>·</span><span>${mins} min read</span><span>·</span><span>${headings.length} section${headings.length===1?"":"s"}</span></p>
+    ${tocHTML}
+    ${tmp.innerHTML}
   `;
+  // intra-page TOC clicks: smooth scroll via lenis
+  $$(".post-toc a", view).forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = a.getAttribute("href").slice(1);
+      const target = view.querySelector("#" + CSS.escape(id));
+      if (target) lenis.scrollTo(target, { offset: -80, duration: 0.5 });
+    });
+  });
   gsap.from(view.children, { y: 10, autoAlpha: 0, duration: 0.4, stagger: 0.03, ease: "expo.out" });
   if (window.__isOwner) {
     $("#post-edit").addEventListener("click", () => openEditor(post));

@@ -388,6 +388,32 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .journal-view a{color:var(--accent);border-bottom:1px solid currentColor}
 .journal-view img{max-width:100%;height:auto;border-radius:var(--radius-sm);margin:1rem 0;border:1px solid var(--line)}
 .journal-view .post-date{font-size:.7rem;color:var(--muted);letter-spacing:.1em;margin-bottom:1.5rem}
+.post-meta-line{display:flex;flex-wrap:wrap;gap:.55rem;font-size:.7rem;color:var(--muted);letter-spacing:.05em;margin:0 0 1rem}
+.post-toc{
+  margin:0 0 2rem;padding:.9rem 1.1rem;
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);font-size:.84rem;
+}
+.post-toc strong{display:block;font-size:.62rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;font-weight:600}
+.post-toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+.post-toc li{counter-increment:toc;padding:.2rem 0;line-height:1.4}
+.post-toc li::before{content:counter(toc) ".";color:var(--muted);margin-right:.5rem;font-variant-numeric:tabular-nums}
+.post-toc li.lvl-h3{padding-left:1.4rem;font-size:.78rem}
+.post-toc li.lvl-h3::before{display:none}
+.post-toc a{color:var(--muted-2);border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
+.post-toc a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Back-to-top floating button */
+.to-top{
+  position:fixed;right:1.2rem;bottom:1.2rem;z-index:60;
+  width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--line-strong);border-radius:50%;color:var(--fg);
+  background:rgba(13,10,26,.85);backdrop-filter:blur(10px);
+  opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease,border-color .2s ease;
+}
+.to-top.show{opacity:1;transform:translateY(0)}
+.to-top:hover{border-color:var(--accent);color:var(--accent)}
+@media (max-width:480px){.to-top{right:.8rem;bottom:.8rem;width:38px;height:38px}}
 
 /* ===== Modal ===== */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:2rem}
