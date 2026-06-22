@@ -270,6 +270,7 @@ function renderRoute() {
   }
   $$(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === route));
   $$(".navlink, #mobile-nav a").forEach((a) => a.classList.toggle("active", a.dataset.route === route));
+  if (route !== "/journal" && typeof hidePostRail === "function") hidePostRail();
   const active = $(`.page[data-page="${route}"]`);
   if (active) {
     lenis.scrollTo(0, { immediate: true });
@@ -853,6 +854,45 @@ function renderJournalList() {
   const target = activePostId && posts.find((p) => p.id === activePostId) ? activePostId : posts[0].id;
   openPost(target);
 }
+let railObserver = null;
+function buildPostRail(view, headings) {
+  const rail = $("#post-rail");
+  if (!rail) return;
+  if (railObserver) { railObserver.disconnect(); railObserver = null; }
+  if (!headings.length || currentRoute() !== "/journal") { rail.hidden = true; rail.innerHTML = ""; return; }
+
+  rail.innerHTML = headings.map((h) => `
+    <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" aria-label="${escapeAttr(h.textContent)}">
+      <span class="rail-label">${escapeHtml(h.textContent)}</span>
+    </button>
+  `).join("");
+  rail.hidden = false;
+
+  $$(".rail-item", rail).forEach((b) => {
+    b.addEventListener("click", () => {
+      const id = b.dataset.id;
+      const target = view.querySelector("#" + CSS.escape(id));
+      if (target) lenis.scrollTo(target, { offset: -80, duration: 0.5 });
+    });
+  });
+
+  const items = $$(".rail-item", rail);
+  const setActive = (id) => items.forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+  railObserver = new IntersectionObserver((entries) => {
+    const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+    if (visible[0]) setActive(visible[0].target.id);
+  }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
+  headings.forEach((h) => railObserver.observe(h));
+  if (headings[0]) setActive(headings[0].id);
+}
+
+function hidePostRail() {
+  const rail = $("#post-rail");
+  if (!rail) return;
+  if (railObserver) { railObserver.disconnect(); railObserver = null; }
+  rail.hidden = true; rail.innerHTML = "";
+}
+
 function slugify(s) {
   return String(s).toLowerCase().trim()
     .replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 80);
@@ -882,31 +922,15 @@ async function openPost(id) {
     if (slugSeen[s]) { slugSeen[s]++; s = `${s}-${slugSeen[s]}`; } else slugSeen[s] = 1;
     h.id = s;
   });
-  const showToc = headings.length >= 3;
-  const tocHTML = showToc
-    ? `<nav class="post-toc" aria-label="On this page"><strong>On this page</strong><ol>${
-        headings.map((h) => `<li class="lvl-${h.tagName.toLowerCase()}"><a href="#${h.id}">${escapeHtml(h.textContent)}</a></li>`).join("")
-      }</ol></nav>`
-    : "";
-
   view.innerHTML = `
     ${window.__isOwner ? `<div class="post-actions">
       <button class="btn ghost sm" id="post-edit">Edit</button>
       <button class="btn danger sm" id="post-del">Delete</button>
     </div>` : ``}
     <p class="post-meta-line"><span>${escapeHtml(post.date || "")}</span><span>·</span><span>${mins} min read</span><span>·</span><span>${headings.length} section${headings.length===1?"":"s"}</span></p>
-    ${tocHTML}
     ${tmp.innerHTML}
   `;
-  // intra-page TOC clicks: smooth scroll via lenis
-  $$(".post-toc a", view).forEach((a) => {
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      const id = a.getAttribute("href").slice(1);
-      const target = view.querySelector("#" + CSS.escape(id));
-      if (target) lenis.scrollTo(target, { offset: -80, duration: 0.5 });
-    });
-  });
+  buildPostRail(view, headings);
   gsap.from(view.children, { y: 10, autoAlpha: 0, duration: 0.4, stagger: 0.03, ease: "expo.out" });
   if (window.__isOwner) {
     $("#post-edit").addEventListener("click", () => openEditor(post));

@@ -403,6 +403,34 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .post-toc a{color:var(--muted-2);border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .post-toc a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
+/* Right-side TOC rail (dashes per heading) */
+.post-rail{
+  position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:55;
+  display:flex;flex-direction:column;gap:.4rem;
+  padding:.4rem .3rem;border-radius:8px;
+}
+.rail-item{
+  position:relative;display:flex;align-items:center;
+  width:22px;height:14px;padding:0;border:0;background:none;cursor:pointer;
+}
+.rail-item::before{
+  content:"";display:block;height:2px;
+  width:14px;background:var(--muted);opacity:.5;border-radius:2px;
+  transition:width .2s ease,opacity .2s ease,background .2s ease;
+}
+.rail-item.lvl-h3::before{width:8px}
+.rail-item:hover::before{width:22px;opacity:1;background:var(--fg)}
+.rail-item.active::before{width:22px;opacity:1;background:var(--accent)}
+.rail-label{
+  position:absolute;right:30px;top:50%;transform:translateY(-50%);
+  font-size:.7rem;letter-spacing:.02em;color:var(--fg);
+  background:rgba(13,10,26,.96);border:1px solid var(--line);border-radius:6px;
+  padding:.35rem .65rem;white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;backdrop-filter:blur(8px);
+}
+.rail-item:hover .rail-label{opacity:1}
+@media (max-width:1100px){.post-rail{display:none}}
+
 /* Back-to-top floating button */
 .to-top{
   position:fixed;right:1.2rem;bottom:1.2rem;z-index:60;
