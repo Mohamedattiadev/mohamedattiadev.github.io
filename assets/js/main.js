@@ -410,18 +410,6 @@ const PINNED_PROJECTS = [
     topics: ["algorithms", "graphs", "school"],
     owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
   },
-  {
-    name: "Portfolio + social-media project",
-    full_name: "Mohamedattiadev/portfolio-social",
-    description: "Personal portfolio combined with a small social-feed app. In progress. Repo coming soon.",
-    html_url: "https://github.com/Mohamedattiadev",
-    homepage: null, has_pages: false,
-    language: "TypeScript",
-    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
-    pushed_at: "2026-06-20T00:00:00Z",
-    topics: ["wip", "portfolio"],
-    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
-  },
 ];
 
 function liveURL(r) {
