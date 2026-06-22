@@ -862,18 +862,25 @@ function buildPostRail(view, headings) {
   if (!headings.length || currentRoute() !== "/journal") { rail.hidden = true; rail.innerHTML = ""; return; }
 
   rail.innerHTML = headings.map((h) => `
-    <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" aria-label="${escapeAttr(h.textContent)}">
-      <span class="rail-label">${escapeHtml(h.textContent)}</span>
-    </button>
+    <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" data-label="${escapeAttr(h.textContent)}" aria-label="${escapeAttr(h.textContent)}"></button>
   `).join("");
   rail.hidden = false;
 
+  const tip = $("#rail-tooltip");
   $$(".rail-item", rail).forEach((b) => {
     b.addEventListener("click", () => {
       const id = b.dataset.id;
       const target = view.querySelector("#" + CSS.escape(id));
       if (target) lenis.scrollTo(target, { offset: -80, duration: 0.5 });
     });
+    b.addEventListener("pointerenter", () => {
+      tip.textContent = b.dataset.label;
+      tip.setAttribute("aria-hidden", "false");
+      const r = b.getBoundingClientRect();
+      tip.style.top = `${Math.round(r.top + r.height / 2 - tip.offsetHeight / 2)}px`;
+      tip.style.left = `${Math.round(r.left - tip.offsetWidth - 10)}px`;
+    });
+    b.addEventListener("pointerleave", () => tip.setAttribute("aria-hidden", "true"));
   });
 
   const items = $$(".rail-item", rail);
