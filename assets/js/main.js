@@ -385,18 +385,42 @@ const HIDE_REPOS = new Set([
    or projects you want pinned to the top. Each item is a fake-repo shape
    so the same render code works. */
 const PINNED_PROJECTS = [
-  // {
-  //   name: "University DBMS",
-  //   full_name: "Mohamedattiadev/University-DBMS",
-  //   description: "Final-project DBMS for a uni course. PostgreSQL + Node.",
-  //   html_url: "https://github.com/Mohamedattiadev/University-DBMS",
-  //   homepage: null,
-  //   language: "TypeScript",
-  //   stargazers_count: 0, forks_count: 0, open_issues_count: 0,
-  //   pushed_at: "2026-06-01T00:00:00Z",
-  //   topics: ["database", "school"],
-  //   owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
-  // },
+  {
+    name: "University DBMS",
+    full_name: "Kerim123-k/University-Database-Management-System-Project-",
+    description: "Group project — full SQL-based university DBMS: students, courses, grades, enrollment. SENG class.",
+    html_url: "https://github.com/Kerim123-k/University-Database-Management-System-Project-",
+    homepage: null, has_pages: false,
+    language: "SQL",
+    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
+    pushed_at: "2026-01-15T00:00:00Z",
+    topics: ["school", "sql", "dbms"],
+    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
+  },
+  {
+    name: "literature review — Louvain Algorithm",
+    full_name: "Kerim123-k/Design-And-Analysis-Of-Algorithms-Project-SENG303",
+    description: "Literature review + implementation of the Louvain community-detection algorithm. SENG303 project.",
+    html_url: "https://github.com/Kerim123-k/Design-And-Analysis-Of-Algorithms-Project-SENG303",
+    homepage: null, has_pages: false,
+    language: "Python",
+    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
+    pushed_at: "2026-01-10T00:00:00Z",
+    topics: ["algorithms", "graphs", "school"],
+    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
+  },
+  {
+    name: "Portfolio + social-media project",
+    full_name: "Mohamedattiadev/portfolio-social",
+    description: "Personal portfolio combined with a small social-feed app. In progress. Repo coming soon.",
+    html_url: "https://github.com/Mohamedattiadev",
+    homepage: null, has_pages: false,
+    language: "TypeScript",
+    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
+    pushed_at: "2026-06-20T00:00:00Z",
+    topics: ["wip", "portfolio"],
+    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
+  },
 ];
 
 function liveURL(r) {
