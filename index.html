@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
+  <script>
+    // GitHub Pages SPA: restore path after 404 redirect (rafrex pattern)
+    (function (l) {
+      if (l.search[1] === "/") {
+        var decoded = l.search.slice(1).split("&").map(function (s) { return s.replace(/~and~/g, "&"); }).join("?");
+        history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+      }
+    }(location));
+  </script>
   <title>Mohamed Attia — Software Engineer</title>
   <meta name="description" content="Mohamed Attia — software engineering student. Projects, experiments, journal." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%238b5cf6'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='%23fff' font-family='monospace' font-weight='700'%3EM%3C/text%3E%3C/svg%3E" />
@@ -37,14 +46,14 @@
   </button>
 
   <header class="topbar">
-    <a href="#/" class="brand" data-route="/" aria-label="Home">Mohamed Attia</a>
+    <a href="/" class="brand" data-route="/" aria-label="Home">Mohamed Attia</a>
     <nav class="navlinks" aria-label="Primary">
-      <a href="#/"        data-route="/"        class="navlink">Home</a>
-      <a href="#/work"    data-route="/work"    class="navlink">Work</a>
-      <a href="#/journal" data-route="/journal" class="navlink">Journal</a>
-      <a href="#/contact" data-route="/contact" class="navlink">Contact</a>
+      <a href="/"        data-route="/"        class="navlink">Home</a>
+      <a href="/work"    data-route="/work"    class="navlink">Work</a>
+      <a href="/journal" data-route="/journal" class="navlink">Journal</a>
+      <a href="/contact" data-route="/contact" class="navlink">Contact</a>
     </nav>
-    <a class="btn pill" href="#/contact" data-route="/contact" data-magnet>
+    <a class="btn pill" href="/contact" data-route="/contact" data-magnet>
       <span class="dot-live"></span>Hire me
     </a>
     <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
@@ -53,10 +62,10 @@
   </header>
 
   <div id="mobile-nav" class="mobile-nav" aria-hidden="true">
-    <a href="#/"        data-route="/">Home</a>
-    <a href="#/work"    data-route="/work">Work</a>
-    <a href="#/journal" data-route="/journal">Journal</a>
-    <a href="#/contact" data-route="/contact">Contact</a>
+    <a href="/"        data-route="/">Home</a>
+    <a href="/work"    data-route="/work">Work</a>
+    <a href="/journal" data-route="/journal">Journal</a>
+    <a href="/contact" data-route="/contact">Contact</a>
   </div>
 
   <main id="main">
@@ -90,11 +99,11 @@
             Sharpening full-stack skills the hard way — no AI handholding — to land real full-time work.
           </p>
           <div class="hero-cta">
-            <a href="#/work" data-route="/work" class="btn primary" data-magnet>
+            <a href="/work" data-route="/work" class="btn primary" data-magnet>
               <span>Selected work</span>
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <a href="#/contact" data-route="/contact" class="btn ghost">
+            <a href="/contact" data-route="/contact" class="btn ghost">
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M3 7l9 6 9-6M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span>Contact me</span>
             </a>
@@ -140,7 +149,7 @@
 
       <section class="cta-band">
         <h2>Got an idea? <em>Let's build it.</em></h2>
-        <a class="btn primary lg" href="#/contact" data-route="/contact" data-magnet>Start a conversation →</a>
+        <a class="btn primary lg" href="/contact" data-route="/contact" data-magnet>Start a conversation →</a>
       </section>
     </section>
 
@@ -250,8 +259,8 @@
             <span class="ch-status"><span class="dot-live"></span>Open to work · Summer 2026</span>
           </div>
           <p class="ch-meta">
-            Ankara · UTC+3 · English / Türkçe / العربية ·
-            replies on email within 24h, Mon–Fri.
+            Based in Ankara · writes in English, Türkçe, and العربية ·
+            email replies within a day, Mon–Fri.
           </p>
         </div>
       </div>
@@ -259,7 +268,7 @@
       <dl class="contact-list">
         <div class="row">
           <dt>Email</dt>
-          <dd><a href="mailto:mohattiads@gmail.com">mohattiads@gmail.com</a></dd>
+          <dd><a href="mailto:mohamedattia.dev@gmail.com">mohamedattia.dev@gmail.com</a></dd>
         </div>
         <div class="row">
           <dt>CV</dt>

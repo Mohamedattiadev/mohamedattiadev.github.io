@@ -396,7 +396,10 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .journal-view{min-height:300px;line-height:1.75;font-size:.94rem;max-width:68ch;color:var(--muted-2)}
 .journal-view .post-actions{display:flex;gap:.5rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--line)}
 .journal-view h1{font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:-.03em;margin:0 0 1rem;line-height:1.15;color:var(--fg);font-weight:600}
-.journal-view h2{font-size:1.2rem;margin-top:2.2rem;letter-spacing:-.015em;color:var(--fg)}
+.journal-view h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.8rem;letter-spacing:-.015em;color:var(--fg);font-weight:600;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+.journal-view h3{font-size:1.02rem;margin-top:1.8rem;margin-bottom:.55rem;letter-spacing:-.005em;color:var(--accent);font-weight:600;display:flex;align-items:baseline;gap:.45rem}
+.journal-view h3::before{content:"#";font-family:var(--mono);color:var(--muted);font-weight:500;opacity:.7}
+.journal-view h4{font-size:.9rem;margin-top:1.4rem;margin-bottom:.4rem;color:var(--fg);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .journal-view p{margin:0 0 1.1rem}
 .journal-view ul,.journal-view ol{padding-left:1.1rem}
 .journal-view li{margin-bottom:.5rem}

@@ -12,11 +12,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 $("#year").textContent = new Date().getFullYear();
 
 /* ===== Owner mode (toggle journal edit controls) =====
-   Activate: visit  #/?owner=1   ·   Deactivate: #/?owner=0
+   Activate: visit  /?owner=1   ·   Deactivate: /?owner=0
    Or auto-on when running on localhost / 127.0.0.1.
 */
 (function ownerMode() {
-  const q = new URLSearchParams(location.hash.split("?")[1] || "");
+  const q = new URLSearchParams(location.search);
   if (q.get("owner") === "1") localStorage.setItem("pf:owner", "1");
   if (q.get("owner") === "0") localStorage.setItem("pf:owner", "0");
   const stored = localStorage.getItem("pf:owner");
@@ -251,12 +251,14 @@ bindMagnetic();
 
 /* ===== Hash router ===== */
 function currentRoute() {
-  const h = location.hash.replace(/^#/, "") || "/";
-  return h.startsWith("/") ? h : "/" + h;
+  const p = location.pathname || "/";
+  return p === "" ? "/" : p;
 }
 function goRoute(route, replace = false) {
-  if (replace) history.replaceState(null, "", "#" + route);
-  else location.hash = route;
+  const url = route + location.search + location.hash;
+  if (replace) history.replaceState(null, "", url);
+  else history.pushState(null, "", url);
+  renderRoute();
 }
 function renderRoute() {
   const route = currentRoute();
@@ -279,7 +281,7 @@ function renderRoute() {
     ScrollTrigger.refresh();
   }
 }
-addEventListener("hashchange", renderRoute);
+addEventListener("popstate", renderRoute);
 document.addEventListener("click", (e) => {
   const a = e.target.closest("a[data-route]");
   if (!a) return;
@@ -1230,7 +1232,6 @@ function escapeHtml(s) {
 function escapeAttr(s) { return escapeHtml(s); }
 
 /* ===== Boot ===== */
-if (!location.hash) goRoute("/", true);
 renderRoute();
 // re-bind magnetic on DOM additions (only matches .btn.pill / .btn.primary w/ data-magnet)
 const mo = new MutationObserver(() => bindMagnetic());
