@@ -346,11 +346,13 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 @media (max-width:760px){.journal-layout{grid-template-columns:1fr;gap:1.5rem}}
 .journal-list{
   display:flex;flex-direction:column;
-  max-height:72vh;overflow-y:auto;
+  position:sticky;top:88px;align-self:start;
+  max-height:calc(100vh - 110px);overflow-y:auto;
   border:1px solid var(--line);border-radius:var(--radius-sm);
   padding:.6rem .4rem;font-size:.82rem;
   background:rgba(0,0,0,.2);
 }
+@media (max-width:760px){.journal-list{position:static;max-height:50vh}}
 .journal-tree-year,.journal-tree-month{
   display:flex;align-items:center;gap:.35rem;width:100%;text-align:left;cursor:pointer;
   font-family:var(--mono);background:none;border:0;color:inherit;
