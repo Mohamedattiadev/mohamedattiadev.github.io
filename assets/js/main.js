@@ -873,12 +873,22 @@ function buildPostRail(view, headings) {
 
   const items = $$(".rail-item", rail);
   const setActive = (id) => items.forEach((b) => b.classList.toggle("active", b.dataset.id === id));
-  railObserver = new IntersectionObserver((entries) => {
-    const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.target.offsetTop - b.target.offsetTop);
-    if (visible[0]) setActive(visible[0].target.id);
-  }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
-  headings.forEach((h) => railObserver.observe(h));
-  if (headings[0]) setActive(headings[0].id);
+
+  // pick whichever heading's top is just above (or equal to) anchor line (120px below top)
+  const ANCHOR = 140;
+  const compute = () => {
+    let activeH = headings[0];
+    for (const h of headings) {
+      const top = h.getBoundingClientRect().top;
+      if (top <= ANCHOR) activeH = h; else break;
+    }
+    if (activeH) setActive(activeH.id);
+  };
+  railObserver = { _h: compute, disconnect() { lenis.off("scroll", this._h); removeEventListener("scroll", this._h); removeEventListener("resize", this._h); } };
+  lenis.on("scroll", compute);
+  addEventListener("scroll", compute, { passive: true });
+  addEventListener("resize", compute);
+  requestAnimationFrame(compute);
 }
 
 function hidePostRail() {
@@ -925,7 +935,8 @@ async function openPost(id) {
     <p class="post-meta-line"><span>${escapeHtml(post.date || "")}</span><span>·</span><span>${mins} min read</span><span>·</span><span>${headings.length} section${headings.length===1?"":"s"}</span></p>
     ${tmp.innerHTML}
   `;
-  buildPostRail(view, headings);
+  const liveHeadings = [...view.querySelectorAll("h2, h3")];
+  buildPostRail(view, liveHeadings);
   gsap.from(view.children, { y: 10, autoAlpha: 0, duration: 0.4, stagger: 0.03, ease: "expo.out" });
   if (window.__isOwner) {
     $("#post-edit").addEventListener("click", () => openEditor(post));
