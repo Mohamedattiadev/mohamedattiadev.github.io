@@ -771,16 +771,44 @@ async function initJournal() {
   await fetchAutoPosts();
   renderJournalList();
   bindJournalToolbar();
+  bindJournalFilter();
+}
+
+function bindJournalFilter() {
+  if (bindJournalFilter.bound) return;
+  const input = $("#journal-filter");
+  if (!input) return;
+  bindJournalFilter.bound = true;
+  let t = 0;
+  input.addEventListener("input", () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      journalFilter = input.value;
+      renderJournalList();
+    }, 120);
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { input.value = ""; journalFilter = ""; renderJournalList(); }
+  });
 }
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const TREE_COLLAPSED = new Set(); // keys: "Y" or "Y-M"
+const TREE_KEY = "journal.tree.collapsed.v1";
+const TREE_COLLAPSED = new Set(JSON.parse(localStorage.getItem(TREE_KEY) || "[]"));
+const persistTree = () => localStorage.setItem(TREE_KEY, JSON.stringify([...TREE_COLLAPSED]));
+let journalFilter = "";
 
 function renderJournalList() {
   const list = $("#journal-list");
-  const posts = loadPosts();
+  const allPosts = loadPosts();
   list.innerHTML = "";
-  if (!posts.length) {
+  if (!allPosts.length) {
     $("#journal-view").innerHTML = `<p class="muted">No posts yet.${window.__isOwner ? ` Click <strong>New post</strong> to add one.` : ``}</p>`;
+    return;
+  }
+  const q = journalFilter.trim().toLowerCase();
+  const posts = q ? allPosts.filter((p) => (p.title || "").toLowerCase().includes(q) || (p.body || "").toLowerCase().includes(q)) : allPosts;
+  if (!posts.length) {
+    list.innerHTML = `<div class="empty">No posts match “${escapeHtml(q)}”.</div>`;
     return;
   }
   const buckets = {};
@@ -794,14 +822,16 @@ function renderJournalList() {
 
   const years = Object.keys(buckets).sort().reverse();
   years.forEach((y) => {
-    const yCollapsed = TREE_COLLAPSED.has(y);
+    const yCount = Object.values(buckets[y]).reduce((n, arr) => n + arr.length, 0);
+    const yCollapsed = !q && TREE_COLLAPSED.has(y);
     const yh = document.createElement("button");
     yh.type = "button";
     yh.className = "journal-tree-year" + (yCollapsed ? " collapsed" : "");
-    yh.innerHTML = `<span class="caret">${yCollapsed ? "▸" : "▾"}</span> ${y}/`;
+    yh.innerHTML = `<span class="caret">▸</span> ${y}/<span class="tree-count">${yCount}</span>`;
     yh.addEventListener("click", () => {
       if (TREE_COLLAPSED.has(y)) TREE_COLLAPSED.delete(y);
       else TREE_COLLAPSED.add(y);
+      persistTree();
       renderJournalList();
     });
     list.appendChild(yh);
@@ -810,20 +840,21 @@ function renderJournalList() {
     const months = Object.keys(buckets[y]).sort().reverse();
     months.forEach((m) => {
       const key = `${y}-${m}`;
-      const mCollapsed = TREE_COLLAPSED.has(key);
+      const arr = buckets[y][m];
+      const mCollapsed = !q && TREE_COLLAPSED.has(key);
       const mh = document.createElement("button");
       mh.type = "button";
       mh.className = "journal-tree-month" + (mCollapsed ? " collapsed" : "");
-      mh.innerHTML = `<span class="caret">${mCollapsed ? "▸" : "▾"}</span> └─ ${MONTHS[(+m) - 1] || m}`;
+      mh.innerHTML = `<span class="caret">▸</span> └─ ${MONTHS[(+m) - 1] || m}<span class="tree-count">${arr.length}</span>`;
       mh.addEventListener("click", () => {
         if (TREE_COLLAPSED.has(key)) TREE_COLLAPSED.delete(key);
         else TREE_COLLAPSED.add(key);
+        persistTree();
         renderJournalList();
       });
       list.appendChild(mh);
       if (mCollapsed) return;
 
-      const arr = buckets[y][m];
       arr.forEach((p, i) => {
         const last = i === arr.length - 1;
         const b = document.createElement("button");
@@ -841,18 +872,26 @@ function renderJournalList() {
   });
   const target = activePostId && posts.find((p) => p.id === activePostId) ? activePostId : posts[0].id;
   openPost(target);
+  requestAnimationFrame(() => {
+    const el = list.querySelector(`.post-item[data-id="${CSS.escape(target)}"]`);
+    if (el) el.scrollIntoView({ block: "nearest" });
+  });
 }
 let railObserver = null;
 function buildPostRail(view, headings) {
   const rail = $("#post-rail");
   if (!rail) return;
   if (railObserver) { railObserver.disconnect(); railObserver = null; }
-  if (!headings.length || currentRoute() !== "/journal") { rail.hidden = true; rail.innerHTML = ""; return; }
+  if (headings.length < 2 || currentRoute() !== "/journal") { rail.hidden = true; rail.innerHTML = ""; return; }
 
-  rail.innerHTML = headings.map((h) => `
-    <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" data-label="${escapeAttr(h.textContent)}" aria-label="${escapeAttr(h.textContent)}"></button>
-  `).join("");
+  rail.innerHTML = `
+    <div class="rail-track" aria-hidden="true"><div class="rail-fill"></div></div>
+    ${headings.map((h) => `
+      <button class="rail-item lvl-${h.tagName.toLowerCase()}" data-id="${escapeAttr(h.id)}" data-label="${escapeAttr(h.textContent)}" aria-label="${escapeAttr(h.textContent)}"></button>
+    `).join("")}
+  `;
   rail.hidden = false;
+  const fill = $(".rail-fill", rail);
 
   const tip = $("#rail-tooltip");
   $$(".rail-item", rail).forEach((b) => {
@@ -872,11 +911,25 @@ function buildPostRail(view, headings) {
   });
 
   const items = $$(".rail-item", rail);
-  const setActive = (id) => items.forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+  let lastId = null, rafPending = false;
+  const setActive = (id) => {
+    if (id === lastId) return;
+    lastId = id;
+    let idx = 0;
+    items.forEach((b, i) => {
+      const on = b.dataset.id === id;
+      b.classList.toggle("active", on);
+      if (on) idx = i;
+    });
+    if (fill && items.length > 1) {
+      const pct = (idx / (items.length - 1)) * 100;
+      fill.style.transform = `scaleY(${pct / 100})`;
+    }
+  };
 
-  // pick whichever heading's top is just above (or equal to) anchor line (120px below top)
   const ANCHOR = 140;
   const compute = () => {
+    rafPending = false;
     let activeH = headings[0];
     for (const h of headings) {
       const top = h.getBoundingClientRect().top;
@@ -884,10 +937,18 @@ function buildPostRail(view, headings) {
     }
     if (activeH) setActive(activeH.id);
   };
-  railObserver = { _h: compute, disconnect() { lenis.off("scroll", this._h); removeEventListener("scroll", this._h); removeEventListener("resize", this._h); } };
-  lenis.on("scroll", compute);
-  addEventListener("scroll", compute, { passive: true });
-  addEventListener("resize", compute);
+  const schedule = () => { if (!rafPending) { rafPending = true; requestAnimationFrame(compute); } };
+  railObserver = {
+    _h: schedule,
+    disconnect() {
+      if (typeof lenis !== "undefined" && lenis?.off) lenis.off("scroll", this._h);
+      removeEventListener("scroll", this._h);
+      removeEventListener("resize", this._h);
+    },
+  };
+  if (typeof lenis !== "undefined" && lenis?.on) lenis.on("scroll", schedule);
+  addEventListener("scroll", schedule, { passive: true });
+  addEventListener("resize", schedule);
   requestAnimationFrame(compute);
 }
 

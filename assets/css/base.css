@@ -344,15 +344,30 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .j-info{font-size:.74rem;letter-spacing:.04em}
 .journal-layout{max-width:1280px;margin:0 auto 6rem;padding:0 1.5rem;display:grid;grid-template-columns:300px 1fr;gap:2.5rem}
 @media (max-width:760px){.journal-layout{grid-template-columns:1fr;gap:1.5rem}}
-.journal-list{
-  display:flex;flex-direction:column;
+.journal-aside{
+  display:flex;flex-direction:column;gap:.5rem;
   position:sticky;top:88px;align-self:start;
-  max-height:calc(100vh - 110px);overflow-y:auto;
+  max-height:calc(100vh - 110px);
   border:1px solid var(--line);border-radius:var(--radius-sm);
-  padding:.6rem .4rem;font-size:.82rem;
-  background:rgba(0,0,0,.2);
+  padding:.5rem .4rem;background:rgba(0,0,0,.2);
 }
-@media (max-width:760px){.journal-list{position:static;max-height:50vh}}
+@media (max-width:760px){.journal-aside{position:static;max-height:60vh}}
+.journal-search{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.35rem .55rem;border:1px solid var(--line);border-radius:6px;
+  background:rgba(0,0,0,.3);color:var(--muted);
+  transition:border-color .15s ease,color .15s ease;
+}
+.journal-search:focus-within{border-color:var(--accent);color:var(--fg)}
+.journal-search input{
+  flex:1;background:none;border:0;outline:0;color:inherit;
+  font:500 .78rem/1 var(--mono);letter-spacing:.02em;padding:.15rem 0;
+}
+.journal-search input::placeholder{color:var(--muted);opacity:.7}
+.journal-search input::-webkit-search-cancel-button{appearance:none}
+.journal-list{
+  display:flex;flex-direction:column;overflow-y:auto;flex:1 1 auto;font-size:.82rem;
+}
 .journal-tree-year,.journal-tree-month{
   display:flex;align-items:center;gap:.35rem;width:100%;text-align:left;cursor:pointer;
   font-family:var(--mono);background:none;border:0;color:inherit;
@@ -361,7 +376,9 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .journal-tree-year:hover,.journal-tree-month:hover{background:rgba(255,255,255,.04)}
 .journal-tree-year{font-size:.78rem;letter-spacing:.04em;color:var(--accent);padding:.4rem .4rem .3rem;font-weight:600}
 .journal-tree-month{font-size:.7rem;letter-spacing:.04em;color:var(--muted-2);padding:.25rem .8rem .2rem}
-.caret{display:inline-block;width:10px;font-size:.66rem;color:var(--muted)}
+.caret{display:inline-block;width:10px;height:10px;font-size:.66rem;color:var(--muted);transition:transform .15s ease;transform:rotate(90deg)}
+.collapsed > .caret{transform:rotate(0deg)}
+.tree-count{margin-left:auto;font-size:.6rem;color:var(--muted);opacity:.7;letter-spacing:0}
 .journal-list .post-item{
   display:flex;align-items:baseline;gap:.5rem;
   width:100%;text-align:left;cursor:pointer;
@@ -369,6 +386,7 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
   color:var(--muted-2);transition:background .15s ease,color .15s ease;
   font-family:var(--mono);
 }
+.journal-list .empty{font-size:.74rem;color:var(--muted);padding:.6rem .5rem;font-family:var(--mono)}
 .journal-list .post-item:hover{background:rgba(255,255,255,.04);color:var(--fg)}
 .journal-list .post-item.active{background:rgba(167,139,250,.12);color:var(--accent)}
 .journal-list .post-item .glyph{font-size:.74rem;color:var(--muted);flex:none}
@@ -407,13 +425,22 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .post-rail{
   position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:55;
   display:flex;flex-direction:column;gap:.15rem;
-  padding:.45rem .4rem;border-radius:10px;
+  padding:.45rem .4rem .45rem .9rem;border-radius:10px;
   max-height:40vh;overflow-y:auto;line-height:1;
   background:rgba(13,10,26,.55);border:1px solid var(--line);
   backdrop-filter:blur(6px);
 }
 .post-rail::-webkit-scrollbar{width:4px}
 .post-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:2px}
+.rail-track{
+  position:absolute;left:4px;top:.55rem;bottom:.55rem;width:2px;
+  background:var(--line-strong);border-radius:2px;overflow:hidden;
+}
+.rail-fill{
+  position:absolute;inset:0;background:var(--accent);
+  transform-origin:top center;transform:scaleY(0);
+  transition:transform .25s ease;
+}
 .rail-item{
   position:relative;display:flex;align-items:center;
   width:44px;height:8px;padding:0;border:0;background:none;cursor:pointer;flex:none;line-height:1;
@@ -421,11 +448,14 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .rail-item::before{
   content:"";display:block;height:2px;
   width:28px;background:var(--muted);opacity:.55;border-radius:2px;
-  transition:width .18s ease,opacity .18s ease,background .18s ease;
+  transform-origin:left center;
+  transition:transform .18s ease,opacity .18s ease,background .18s ease;
 }
 .rail-item.lvl-h3::before{width:18px}
-.rail-item:hover::before{width:44px;opacity:1;background:var(--fg)}
-.rail-item.active::before{width:44px;opacity:1;background:var(--accent)}
+.rail-item:hover::before{transform:scaleX(1.6);opacity:1;background:var(--fg)}
+.rail-item.lvl-h3:hover::before{transform:scaleX(2.4)}
+.rail-item.active::before{transform:scaleX(1.6);opacity:1;background:var(--accent)}
+.rail-item.lvl-h3.active::before{transform:scaleX(2.4)}
 
 /* Floating tooltip — outside scroll container so it never gets clipped */
 .rail-tip{

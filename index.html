@@ -221,7 +221,13 @@
       </div>
 
       <div class="journal-layout">
-        <aside id="journal-list" class="journal-list" aria-label="Posts" data-lenis-prevent></aside>
+        <aside class="journal-aside" aria-label="Posts">
+          <div class="journal-search">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="journal-filter" type="search" placeholder="Filter posts…" autocomplete="off" spellcheck="false" aria-label="Filter posts" />
+          </div>
+          <div id="journal-list" class="journal-list" data-lenis-prevent></div>
+        </aside>
         <article id="journal-view" class="journal-view"><p class="muted">Select a post →</p></article>
       </div>
     </section>
