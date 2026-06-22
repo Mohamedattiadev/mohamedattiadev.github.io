@@ -446,13 +446,22 @@ async function initWork() {
   const preview = $("#preview");
   try {
     let repos;
-    const cached = sessionStorage.getItem("pf:repos:v6");
-    if (cached) repos = JSON.parse(cached);
-    else {
-      const r = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`);
-      if (!r.ok) throw 0;
-      repos = await r.json();
-      sessionStorage.setItem("pf:repos:v6", JSON.stringify(repos));
+    const CACHE_KEY = "pf:repos:v7";
+    const TTL = 60 * 60 * 1000; // 1h
+    const cachedRaw = localStorage.getItem(CACHE_KEY);
+    const cached = cachedRaw ? JSON.parse(cachedRaw) : null;
+    if (cached && Date.now() - cached.t < TTL) {
+      repos = cached.d;
+    } else {
+      try {
+        const r = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`);
+        if (!r.ok) throw new Error("GitHub API " + r.status);
+        repos = await r.json();
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), d: repos }));
+      } catch (err) {
+        if (cached) { repos = cached.d; }
+        else throw err;
+      }
     }
     repos = repos
       .filter((r) => !HIDE_REPOS.has(r.name))
@@ -578,15 +587,20 @@ async function initWork() {
       readmeEl.classList.remove("empty");
       readmeEl.textContent = "Loading README…";
       const cacheKey = `pf:readme:${r.full_name}`;
-      let md = sessionStorage.getItem(cacheKey);
-      if (md === null) {
+      const TTL = 6 * 60 * 60 * 1000; // 6h
+      const raw = localStorage.getItem(cacheKey);
+      const cached = raw ? JSON.parse(raw) : null;
+      let md;
+      if (cached && Date.now() - cached.t < TTL) {
+        md = cached.d;
+      } else {
         try {
           const rr = await fetch(`https://api.github.com/repos/${r.full_name}/readme`, {
             headers: { Accept: "application/vnd.github.raw" },
           });
-          md = rr.ok ? await rr.text() : "";
-          sessionStorage.setItem(cacheKey, md);
-        } catch { md = ""; }
+          md = rr.ok ? await rr.text() : (cached?.d ?? "");
+          localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), d: md }));
+        } catch { md = cached?.d ?? ""; }
       }
       if (activeRepo !== r) return;
       if (!md) {

@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0d0a1a" />
+  <link rel="manifest" href="/manifest.webmanifest" />
   <script>
     // GitHub Pages SPA: restore path after 404 redirect (rafrex pattern)
     (function (l) {
@@ -23,7 +25,11 @@
   <link rel="preconnect" href="https://cdn.simpleicons.org">
   <link rel="preconnect" href="https://opengraph.githubassets.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="./assets/css/base.css" />
   <link rel="stylesheet" href="./assets/css/base.css" />
+  <link rel="modulepreload" href="./assets/js/main.js" />
+  <link rel="modulepreload" href="https://esm.sh/gsap@3.12.5" />
+  <link rel="modulepreload" href="https://esm.sh/lenis@1.1.13" />
   <script type="importmap">
   {
     "imports": {
@@ -173,7 +179,7 @@
         <aside class="work-aside" aria-label="Project preview">
           <div class="preview" id="preview" data-empty="true">
             <div class="preview-banner">
-              <div class="preview-avatar"><img id="preview-avatar" alt="" loading="lazy"/></div>
+              <div class="preview-avatar"><img id="preview-avatar" alt="" loading="lazy" decoding="async"/></div>
             </div>
             <div class="preview-body" data-lenis-prevent>
               <div class="preview-head">
@@ -251,7 +257,7 @@
       </header>
 
       <div class="contact-hero">
-        <img class="ch-avatar" src="https://github.com/Mohamedattiadev.png?size=160" alt="Mohamed Attia" width="72" height="72" loading="lazy"/>
+        <img class="ch-avatar" src="https://github.com/Mohamedattiadev.png?size=160" alt="Mohamed Attia" width="72" height="72" loading="lazy" decoding="async"/>
         <div class="ch-text">
           <div class="ch-name">
             <strong>Mohamed Attia</strong>
@@ -399,5 +405,12 @@
   </div>
 
   <script type="module" src="./assets/js/main.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
