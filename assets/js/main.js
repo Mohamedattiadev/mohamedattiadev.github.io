@@ -75,6 +75,8 @@ function setOwner(on) {
   else    localStorage.setItem("pf:owner", "0");
   document.body.classList.toggle("owner", on);
   window.__isOwner = on;
+  // Force re-bind of journal editor (handlers gated on owner state)
+  if (typeof bindJournalToolbar === "function") bindJournalToolbar.bound = false;
   if (currentRoute() === "/journal") { inited.journal = false; renderRoute(); }
 }
 
