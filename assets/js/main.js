@@ -303,10 +303,9 @@ function renderRoute() {
     // ensure page visible even if gsap fails to load/run
     active.style.opacity = "";
     active.style.visibility = "";
-    try {
-      gsap.set(active, { autoAlpha: 1, y: 0 });
-      gsap.from(active, { autoAlpha: 0, y: 14, duration: 0.35, ease: "power2.out" });
-    } catch {}
+    // make the page section visible no matter what; subtle fade-in via CSS class
+    active.classList.add("entering");
+    requestAnimationFrame(() => active.classList.remove("entering"));
     try { runPageInit(route); } catch (e) { console.error("page init failed", e); }
     try { ScrollTrigger.refresh(); } catch {}
   }

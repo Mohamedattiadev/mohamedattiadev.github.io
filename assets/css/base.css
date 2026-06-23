@@ -694,3 +694,8 @@ body.owner #visitor-note{display:none!important}
 /* inert fallback for browsers without HTML 'inert' support */
 .no-inert [inert]{pointer-events:none!important;opacity:0!important;visibility:hidden!important}
 .no-inert [inert] *{visibility:hidden!important}
+
+/* page route fade-in (replaces gsap.fromTo which could leave autoAlpha:0 stuck) */
+.page.entering{opacity:.001;transform:translateY(8px)}
+.page.active{transition:opacity .35s ease,transform .35s ease;opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.page.entering{opacity:1;transform:none}}
