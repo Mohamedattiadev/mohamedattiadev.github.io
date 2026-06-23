@@ -977,6 +977,14 @@ async function openPost(id) {
   const post = loadPosts().find((p) => p.id === id);
   const view = $("#journal-view");
   if (!post) { view.innerHTML = `<p class="muted">Post not found.</p>`; return; }
+  if (!post.body && post.bodyUrl) {
+    view.innerHTML = `<p class="muted">Loading…</p>`;
+    try {
+      const r = await fetch(post.bodyUrl);
+      if (r.ok) post.body = await r.text();
+    } catch {}
+    if (activePostId !== id) return;
+  }
   const { marked } = await import("marked");
   const html = marked.parse(post.body || "");
   const mins = readingTime(post.body);
