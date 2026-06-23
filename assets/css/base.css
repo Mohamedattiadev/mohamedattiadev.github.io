@@ -235,7 +235,14 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
   .work-layout{grid-template-columns:1fr}
   .work-aside{position:static}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .work-aside{display:none}
+  .preview.open ~ *,.preview.open{}
+  .work-aside.open{display:block;position:fixed;inset:0;z-index:80;margin:0;padding:0;background:rgba(5,3,10,.5);backdrop-filter:blur(4px)}
+  .work-aside.open .preview{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:88vh;width:100%;border-radius:18px 18px 0 0;animation:sheet-up .28s cubic-bezier(.2,.7,.3,1)}
+  .preview-close{position:absolute;top:.5rem;right:.5rem;z-index:5;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;line-height:1;border-radius:50%;background:rgba(13,10,26,.85);border:1px solid var(--line-strong);color:var(--fg);backdrop-filter:blur(8px)}
 }
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.preview-close{display:none}
 @media (max-width:600px){.grid{grid-template-columns:1fr}}
 .card{
   position:relative;display:flex;flex-direction:column;gap:.7rem;
@@ -361,7 +368,7 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
   border:1px solid var(--line);border-radius:var(--radius-sm);
   padding:.5rem .4rem;background:rgba(0,0,0,.2);
 }
-@media (max-width:760px){.journal-aside{position:static;max-height:60vh}}
+@media (max-width:760px){.journal-aside{position:static;max-height:34vh}}
 .journal-search{
   display:flex;align-items:center;gap:.4rem;
   padding:.35rem .55rem;border:1px solid var(--line);border-radius:6px;

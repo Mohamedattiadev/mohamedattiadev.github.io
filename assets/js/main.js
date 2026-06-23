@@ -555,6 +555,13 @@ async function initWork() {
     // ===== sticky preview panel =====
     let activeRepo = null;
     let pinnedCard = null;
+    const workAside = preview.closest(".work-aside");
+    const isPhone = () => matchMedia("(max-width:1000px)").matches;
+    const openPreviewSheet = () => { if (isPhone() && workAside) { workAside.classList.add("open"); document.body.style.overflow = "hidden"; } };
+    const closePreviewSheet = () => { if (workAside) workAside.classList.remove("open"); document.body.style.overflow = ""; if (pinnedCard) { pinnedCard.classList.remove("pinned"); pinnedCard = null; } };
+    $("#preview-close")?.addEventListener("click", closePreviewSheet);
+    workAside?.addEventListener("click", (e) => { if (e.target === workAside) closePreviewSheet(); });
+    addEventListener("keydown", (e) => { if (e.key === "Escape" && workAside?.classList.contains("open")) closePreviewSheet(); });
 
     const fillPreview = async (r) => {
       activeRepo = r;
@@ -632,8 +639,8 @@ async function initWork() {
         card.addEventListener("click", (e) => {
           if (e.target.closest(".action")) return;
           e.preventDefault();
-          if (pinnedCard === card) { pinnedCard = null; card.classList.remove("pinned"); }
-          else { pinnedCard = card; fillPreview(card._repo); setActive(card); }
+          if (pinnedCard === card) { pinnedCard = null; card.classList.remove("pinned"); closePreviewSheet(); }
+          else { pinnedCard = card; fillPreview(card._repo); setActive(card); openPreviewSheet(); }
         });
       });
     }
