@@ -381,7 +381,7 @@ const HIDE_REPOS = new Set([
   "DataMining_Project",
   "Mohamedattiadev",
   "HM-1-2-",
-  "excalidraw-vault",
+  "excalidraw",
 ]);
 
 /* Manual extras to PREPEND to the Work grid. Use for repos not on GitHub
