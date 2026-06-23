@@ -217,6 +217,20 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 .cta-band em{font-style:normal;background:linear-gradient(90deg,var(--accent),#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* ===== Work — uniform 3-col grid ===== */
+.work-search{
+  max-width:1280px;margin:0 auto 1rem;padding:0 1.5rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.work-search svg{flex:none;color:var(--muted)}
+.work-search input{
+  flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:8px;
+  padding:.55rem .8rem;color:var(--fg);outline:0;
+  font:500 .82rem/1 var(--mono);letter-spacing:.02em;
+  transition:border-color .15s ease;
+}
+.work-search:focus-within input{border-color:var(--accent)}
+.work-search input::placeholder{color:var(--muted);opacity:.7}
+.work-search input::-webkit-search-cancel-button{appearance:none}
 .work-filters{
   max-width:1280px;margin:0 auto 2rem;padding:0 1.5rem;
   display:flex;flex-wrap:wrap;gap:.4rem;

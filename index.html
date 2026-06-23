@@ -59,6 +59,10 @@
     .page{display:none}
     .page.active{display:block}
     .post-rail[hidden],.rail-tip[hidden],.to-top[hidden]{display:none!important}
+    .modal,.dialog{display:none}
+    .modal[aria-hidden="false"],.dialog[aria-hidden="false"]{display:flex}
+    .mobile-nav{position:fixed;inset:0;transform:translateY(-100%);pointer-events:none}
+    #toast{position:fixed;opacity:0;pointer-events:none}
   </style>
   <!-- Importmap MUST appear before any module preload so the parser
        has bare specifier mappings ready before any module starts. -->
@@ -72,8 +76,7 @@
     }
   }
   </script>
-  <link rel="preload" as="style" href="./assets/css/base.css" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="./assets/css/base.css" /></noscript>
+  <link rel="stylesheet" href="./assets/css/base.css" />
   <link rel="modulepreload" href="./assets/js/main.js" />
   <link rel="modulepreload" href="./assets/js/utils.js" />
   <link rel="modulepreload" href="/assets/vendor/gsap.js" />
@@ -203,6 +206,10 @@
         <p class="page-lede">Live from GitHub. Hover any card to see stats. Click to view source; if a live demo exists you'll see a "Visit" badge.</p>
       </header>
 
+      <div class="work-search">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="work-filter" type="search" placeholder="Search projects…" autocomplete="off" spellcheck="false" aria-label="Search projects" />
+      </div>
       <div class="work-filters" role="tablist" aria-label="Filter by language">
         <button class="chip active" data-filter="all" role="tab" aria-selected="true">All</button>
       </div>

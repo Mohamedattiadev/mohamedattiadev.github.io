@@ -439,6 +439,18 @@ const PINNED_PROJECTS = [
     topics: ["algorithms", "graphs", "school"],
     owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
   },
+  {
+    name: "iwantajob",
+    full_name: `${GH_USER}/iwantajob`,
+    description: "Job-application tracker app. Private repo — live demo only.",
+    html_url: null, homepage: "https://iwantajob-rho.vercel.app", has_pages: false,
+    private: true,
+    language: "TypeScript",
+    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
+    pushed_at: "2026-05-01T00:00:00Z",
+    topics: ["nextjs", "vercel", "private"],
+    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
+  },
 ];
 
 function liveURL(r) {
@@ -499,10 +511,20 @@ async function initWork() {
     if (!repos.length) { grid.innerHTML = `<p class="muted">No public repos.</p>`; return; }
 
     let activeLang = "all";
+    let searchQ = "";
     let page = 1;
     const PER_PAGE = 9;
 
-    const filteredRepos = () => activeLang === "all" ? repos : repos.filter((r) => r.language === activeLang);
+    const filteredRepos = () => {
+      let out = activeLang === "all" ? repos : repos.filter((r) => r.language === activeLang);
+      const q = searchQ.trim().toLowerCase();
+      if (!q) return out;
+      return out.filter((r) => {
+        const hay = [r.name, r.description, r.language, (r.topics || []).join(" "), r.full_name]
+          .filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(q);
+      });
+    };
     const pageRepos = () => {
       const all = filteredRepos();
       return all.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -540,10 +562,10 @@ async function initWork() {
         <h3>${escapeHtml(r.name)}</h3>
         ${r.description ? `<p class="desc">${escapeHtml(r.description)}</p>` : `<p class="desc muted">No description.</p>`}
         <div class="actions">
-          <a class="action" href="${r.html_url}" target="_blank" rel="noopener">
+          ${r.html_url ? `<a class="action" href="${r.html_url}" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.33.96.1-.74.4-1.26.72-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.45.11-3.03 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.74.11 3.03.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.35.78 1.05.78 2.12v3.15c0 .31.21.68.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
             Source
-          </a>
+          </a>` : `<span class="action muted" title="Private repository">🔒 Private</span>`}
           ${live ? `<a class="action live" href="${live}" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M21 3l-9 9M5 5h6v2H7v10h10v-4h2v6H5z"/></svg>
             Visit
@@ -615,12 +637,19 @@ async function initWork() {
       $("#preview-branch").textContent  = r.default_branch ? `Branch · ${r.default_branch}` : "";
       $("#preview-updated").textContent = relTime(r.pushed_at);
       $("#preview-topics").innerHTML = (r.topics || []).slice(0, 6).map((t) => `<span class="topic">#${escapeHtml(t)}</span>`).join("");
-      $("#preview-source").href = r.html_url;
+      const sourceA = $("#preview-source");
+      if (r.html_url) { sourceA.href = r.html_url; sourceA.hidden = false; sourceA.textContent = "Source ↗"; }
+      else { sourceA.hidden = true; }
       const visit = $("#preview-visit"); const live = liveURL(r);
       if (live) { visit.href = live; visit.hidden = false; } else visit.hidden = true;
 
       const readmeEl = $("#preview-readme");
       readmeEl.classList.remove("empty");
+      if (r.private) {
+        readmeEl.classList.add("empty");
+        readmeEl.textContent = "Private repository — no README available. Use the live demo.";
+        return;
+      }
       const cacheKey = `pf:readme:${r.full_name}`;
       const TTL = 6 * 60 * 60 * 1000; // 6h
       const raw = localStorage.getItem(cacheKey);
@@ -701,6 +730,20 @@ async function initWork() {
       renderCards();
       ScrollTrigger.refresh();
     });
+
+    const searchInput = $("#work-filter");
+    if (searchInput) {
+      let t = 0;
+      searchInput.addEventListener("input", () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          searchQ = searchInput.value;
+          page = 1;
+          renderCards();
+          ScrollTrigger.refresh();
+        }, 120);
+      });
+    }
 
     document.addEventListener("click", (e) => {
       const b = e.target.closest(".page-btn"); if (!b || b.disabled) return;
