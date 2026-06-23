@@ -345,7 +345,7 @@ function initHome() {
   $$("#page-home [data-split]").forEach((el, i) => {
     tl.from(el.querySelectorAll(".char"), { yPercent: 110, duration: 0.9, stagger: 0.018 }, 0.05 + i * 0.06);
   });
-  tl.from("#page-home .lede", { y: 16, autoAlpha: 0, duration: 0.7 }, "-=0.5");
+  tl.from("#page-home .lede", { y: 16, duration: 0.7 }, "-=0.5");
   tl.from("#page-home .hero-cta .btn", { y: 14, autoAlpha: 0, duration: 0.5, stagger: 0.07 }, "-=0.4");
   tl.from("#page-home .hero-scroll", { autoAlpha: 0, duration: 0.4 }, "-=0.2");
 
