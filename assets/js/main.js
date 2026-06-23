@@ -339,13 +339,10 @@ function buildStackMarquee() {
 function initHome() {
   buildStackMarquee();
 
-  $$("#page-home [data-split]").forEach((el) => splitChars(el));
+  $$("#page-home [data-scramble]").forEach((el, i) => scrambleText(el, { delay: 0.25 + i * 0.18, duration: 0.9 }));
   const tl = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.2 });
   tl.from("#page-home .hero-meta", { y: -10, autoAlpha: 0, duration: 0.5 }, 0);
-  $$("#page-home [data-split]").forEach((el, i) => {
-    tl.from(el.querySelectorAll(".char"), { yPercent: 110, duration: 0.9, stagger: 0.018 }, 0.05 + i * 0.06);
-  });
-  tl.from("#page-home .lede", { y: 16, duration: 0.7 }, "-=0.5");
+  tl.from("#page-home .lede", { y: 16, duration: 0.7 }, "-=0.2");
   tl.from("#page-home .hero-cta .btn", { y: 14, autoAlpha: 0, duration: 0.5, stagger: 0.07 }, "-=0.4");
   tl.from("#page-home .hero-scroll", { autoAlpha: 0, duration: 0.4 }, "-=0.2");
 
@@ -1228,6 +1225,33 @@ function initContact() {
 }
 
 /* ===== Helpers ===== */
+function scrambleText(el, { duration = 1, delay = 0 } = {}) {
+  const final = el.textContent;
+  if (reduceMotion) return;
+  const pool = "!<>-_\\/[]{}=+*^?#$%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const chars = [...final];
+  const seed = chars.map((c) => (c === " " ? " " : pool[(Math.random() * pool.length) | 0])).join("");
+  el.textContent = seed;
+  const startMs = performance.now() + delay * 1000;
+  const totalMs = duration * 1000;
+  const tick = (now) => {
+    const t = Math.max(0, Math.min(1, (now - startMs) / totalMs));
+    if (now < startMs) { requestAnimationFrame(tick); return; }
+    let out = "";
+    for (let i = 0; i < chars.length; i++) {
+      const c = chars[i];
+      if (c === " ") { out += " "; continue; }
+      const reveal = i / chars.length;
+      if (t >= reveal + 0.18) out += c;
+      else out += pool[(Math.random() * pool.length) | 0];
+    }
+    el.textContent = out;
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = final;
+  };
+  requestAnimationFrame(tick);
+}
+
 function splitChars(el) {
   const txt = el.textContent;
   el.textContent = "";
