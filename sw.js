@@ -2,7 +2,7 @@
 // Strategy: precache app shell, stale-while-revalidate for data/CDN,
 // cache-first for images and library bundles, offline fallback.
 
-const VERSION = "v5";
+const VERSION = "v6";
 const SHELL = `shell-${VERSION}`;
 const DATA = `data-${VERSION}`;
 const IMG = `img-${VERSION}`;
@@ -47,6 +47,10 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+async function safePut(cache, req, res) {
+  if (!res || !res.ok || res.type === "opaque" || res.type === "error") return;
+  try { await cache.put(req, res.clone()); } catch {}
+}
 const sameOrigin = (url) => url.origin === self.location.origin;
 const isAPI = (url) => url.host === "api.github.com";
 const isLib = (url) => url.host === "esm.sh";
@@ -64,7 +68,7 @@ async function cacheFirst(req, cacheName) {
   if (hit) return hit;
   try {
     const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
+    safePut(cache, req, res);
     return res;
   } catch (err) {
     if (hit) return hit;
@@ -76,7 +80,7 @@ async function staleWhileRevalidate(req, cacheName) {
   const cache = await caches.open(cacheName);
   const hit = await cache.match(req);
   const network = fetch(req)
-    .then((res) => { if (res.ok) cache.put(req, res.clone()); return res; })
+    .then((res) => { safePut(cache, req, res); return res; })
     .catch(() => null);
   return hit || (await network) || new Response("offline", { status: 503 });
 }
@@ -85,7 +89,7 @@ async function networkFirst(req, cacheName) {
   const cache = await caches.open(cacheName);
   try {
     const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
+    safePut(cache, req, res);
     return res;
   } catch {
     const hit = await cache.match(req);

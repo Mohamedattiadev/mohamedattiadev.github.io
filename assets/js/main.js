@@ -261,6 +261,12 @@ function goRoute(route, replace = false) {
 }
 function renderRoute() {
   const route = currentRoute();
+  // Cleanup transient UI from previous route
+  document.body.style.overflow = "";
+  $("#mobile-nav")?.setAttribute("inert", "");
+  $("#mobile-nav")?.classList.remove("open");
+  $(".menu-btn")?.setAttribute("aria-expanded", "false");
+  $(".work-aside")?.classList.remove("open");
   // /admin → trigger sign-in dialog, fall through to journal page underneath
   if (route === "/admin") {
     if (window.__isOwner) { goRoute("/journal", true); return; }
@@ -292,7 +298,7 @@ const inited = {};
 function runPageInit(route) {
   if (route === "/" && !inited.home) { initHome(); inited.home = true; }
   if (route === "/work" && !inited.work) { initWork(); inited.work = true; }
-  if (route === "/journal") { initJournal(); inited.journal = true; }
+  if (route === "/journal" && !inited.journal) { initJournal(); inited.journal = true; }
   if (route === "/contact" && !inited.contact) { initContact(); inited.contact = true; }
 }
 
@@ -339,7 +345,7 @@ function buildStackMarquee() {
 function initHome() {
   buildStackMarquee();
 
-  $$("#page-home [data-scramble]").forEach((el, i) => scrambleText(el, { delay: 0.25 + i * 0.18, duration: 0.9 }));
+  $$("#page-home [data-scramble]").forEach((el, i) => scrambleText(el, { delay: 0.1 + i * 0.1, duration: 0.45 }));
   const tl = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.2 });
   tl.from("#page-home .hero-meta", { y: -10, autoAlpha: 0, duration: 0.5 }, 0);
   tl.from("#page-home .lede", { y: 16, duration: 0.7 }, "-=0.2");
@@ -446,7 +452,9 @@ async function initWork() {
     const CACHE_KEY = "pf:repos:v7";
     const TTL = 60 * 60 * 1000; // 1h
     const cachedRaw = localStorage.getItem(CACHE_KEY);
-    const cached = cachedRaw ? JSON.parse(cachedRaw) : null;
+    let cached = null;
+    try { cached = cachedRaw ? JSON.parse(cachedRaw) : null; }
+    catch { localStorage.removeItem(CACHE_KEY); }
     if (cached && Date.now() - cached.t < TTL) {
       repos = cached.d;
     } else {
@@ -592,7 +600,9 @@ async function initWork() {
       const cacheKey = `pf:readme:${r.full_name}`;
       const TTL = 6 * 60 * 60 * 1000; // 6h
       const raw = localStorage.getItem(cacheKey);
-      const cached = raw ? JSON.parse(raw) : null;
+      let cached = null;
+      try { cached = raw ? JSON.parse(raw) : null; }
+      catch { localStorage.removeItem(cacheKey); }
       let md;
       if (cached && Date.now() - cached.t < TTL) {
         md = cached.d;
@@ -822,7 +832,10 @@ function bindJournalFilter() {
 }
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const TREE_KEY = "journal.tree.collapsed.v1";
-const TREE_COLLAPSED = new Set(JSON.parse(localStorage.getItem(TREE_KEY) || "[]"));
+const TREE_COLLAPSED = (() => {
+  try { return new Set(JSON.parse(localStorage.getItem(TREE_KEY) || "[]")); }
+  catch { return new Set(); }
+})();
 const persistTree = () => localStorage.setItem(TREE_KEY, JSON.stringify([...TREE_COLLAPSED]));
 let journalFilter = "";
 
