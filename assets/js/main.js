@@ -244,7 +244,7 @@ bindMagnetic();
   const nav = $("#mobile-nav");
   const toggle = (open) => {
     btn.setAttribute("aria-expanded", open ? "true" : "false");
-    nav.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open) nav.removeAttribute("inert"); else nav.setAttribute("inert", "");
     nav.classList.toggle("open", open);
   };
   btn.addEventListener("click", () => toggle(btn.getAttribute("aria-expanded") !== "true"));
