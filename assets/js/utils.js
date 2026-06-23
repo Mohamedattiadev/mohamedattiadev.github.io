@@ -27,6 +27,8 @@ export function byDateDesc(a, b) {
 }
 
 export function routeFromPath(pathname) {
-  const p = pathname || "/";
+  let p = pathname || "/";
+  // strip trailing slash except for "/"
+  if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
   return p === "" ? "/" : p;
 }

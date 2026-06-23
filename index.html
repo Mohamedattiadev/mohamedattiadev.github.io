@@ -441,7 +441,13 @@
   <script>
     if ("serviceWorker" in navigator) {
       addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
+        navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => {});
+      });
+      let _swReloading = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (_swReloading) return;
+        _swReloading = true;
+        location.reload();
       });
     }
   </script>

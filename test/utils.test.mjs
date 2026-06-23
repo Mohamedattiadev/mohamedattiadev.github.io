@@ -72,3 +72,9 @@ test("routeFromPath preserves real paths", () => {
   assert.equal(routeFromPath("/journal"), "/journal");
   assert.equal(routeFromPath("/work"), "/work");
 });
+
+test("routeFromPath strips trailing slash (except root)", () => {
+  assert.equal(routeFromPath("/work/"), "/work");
+  assert.equal(routeFromPath("/journal/"), "/journal");
+  assert.equal(routeFromPath("/"), "/");
+});

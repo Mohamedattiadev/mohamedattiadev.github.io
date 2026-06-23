@@ -297,12 +297,18 @@ function renderRoute() {
   $$(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === route));
   $$(".navlink, #mobile-nav a").forEach((a) => a.classList.toggle("active", a.dataset.route === route));
   if (route !== "/journal" && typeof hidePostRail === "function") hidePostRail();
-  const active = $(`.page[data-page="${route}"]`);
+  const active = $(`.page[data-page="${route}"]`) || $(`.page[data-page="/"]`);
   if (active) {
-    lenis.scrollTo(0, { immediate: true });
-    gsap.fromTo(active, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" });
-    runPageInit(route);
-    ScrollTrigger.refresh();
+    try { lenis.scrollTo(0, { immediate: true }); } catch {}
+    // ensure page visible even if gsap fails to load/run
+    active.style.opacity = "";
+    active.style.visibility = "";
+    try {
+      gsap.set(active, { autoAlpha: 1, y: 0 });
+      gsap.from(active, { autoAlpha: 0, y: 14, duration: 0.35, ease: "power2.out" });
+    } catch {}
+    try { runPageInit(route); } catch (e) { console.error("page init failed", e); }
+    try { ScrollTrigger.refresh(); } catch {}
   }
 }
 addEventListener("popstate", renderRoute);
