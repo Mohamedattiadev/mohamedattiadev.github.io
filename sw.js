@@ -2,7 +2,7 @@
 // Strategy: precache app shell, stale-while-revalidate for data/CDN,
 // cache-first for images and library bundles, offline fallback.
 
-const VERSION = "v10";
+const VERSION = "v11";
 const SHELL = `shell-${VERSION}`;
 const DATA = `data-${VERSION}`;
 const IMG = `img-${VERSION}`;
@@ -18,6 +18,7 @@ const SHELL_URLS = [
   "/assets/css/base.css",
   "/assets/js/main.js",
   "/assets/js/utils.js",
+  "/assets/js/i18n.js",
   "/assets/vendor/gsap.js",
   "/assets/vendor/scrolltrigger.js",
   "/assets/vendor/lenis.js",

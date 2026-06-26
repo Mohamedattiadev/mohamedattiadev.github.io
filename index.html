@@ -53,7 +53,7 @@
     .skip{position:absolute;left:-9999px}
     .loader{position:fixed;inset:0 0 auto 0;height:2px;z-index:90;pointer-events:none}
     .loader .bar{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-    .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:1rem;padding:.85rem 1.5rem;background:rgba(10,7,16,.75);backdrop-filter:blur(14px);border-bottom:1px solid transparent}
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:1rem;padding:.85rem 1.5rem;background:rgba(10,7,16,.75);backdrop-filter:blur(14px);border-bottom:1px solid transparent}
     .brand{display:inline-flex;align-items:center;font-size:.86rem;font-weight:600;padding:.4rem .6rem;border-radius:var(--radius-sm)}
     .navlinks{display:flex;justify-content:center;gap:.1rem;font-size:.78rem}
     .page{display:none}
@@ -79,12 +79,13 @@
   <link rel="stylesheet" href="./assets/css/base.css" />
   <link rel="modulepreload" href="./assets/js/main.js" />
   <link rel="modulepreload" href="./assets/js/utils.js" />
+  <link rel="modulepreload" href="./assets/js/i18n.js" />
   <link rel="modulepreload" href="/assets/vendor/gsap.js" />
   <link rel="modulepreload" href="/assets/vendor/scrolltrigger.js" />
   <link rel="modulepreload" href="/assets/vendor/lenis.js" />
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
   <div class="loader" aria-hidden="true"><span class="bar"></span></div>
   <div id="toast" class="toast" aria-hidden="true"></div>
   <aside id="post-rail" class="post-rail" aria-label="Sections" hidden data-lenis-prevent></aside>
@@ -96,24 +97,40 @@
   <header class="topbar">
     <a href="/" class="brand" data-route="/">Mohamed Attia</a>
     <nav class="navlinks" aria-label="Primary">
-      <a href="/"        data-route="/"        class="navlink">Home</a>
-      <a href="/work"    data-route="/work"    class="navlink">Work</a>
-      <a href="/journal" data-route="/journal" class="navlink">Journal</a>
-      <a href="/contact" data-route="/contact" class="navlink">Contact</a>
+      <a href="/"        data-route="/"        class="navlink" data-i18n="nav.home">Home</a>
+      <a href="/work"    data-route="/work"    class="navlink" data-i18n="nav.work">Work</a>
+      <a href="/journal" data-route="/journal" class="navlink" data-i18n="nav.journal">Journal</a>
+      <a href="/contact" data-route="/contact" class="navlink" data-i18n="nav.contact">Contact</a>
     </nav>
+    <div class="lang-switch" data-i18n-attr="aria-label:nav.lang_label" aria-label="Language">
+      <button class="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+        <span class="lang-current" data-lang-current>EN</span>
+        <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <ul class="lang-menu" role="listbox" hidden>
+        <li role="option" data-lang="en"><button type="button">EN · English</button></li>
+        <li role="option" data-lang="tr"><button type="button">TR · Türkçe</button></li>
+        <li role="option" data-lang="ar"><button type="button">AR · العربية</button></li>
+      </ul>
+    </div>
     <a class="btn pill" href="/contact" data-route="/contact" data-magnet>
-      <span class="dot-live"></span>Hire me
+      <span class="dot-live"></span><span data-i18n="nav.hire">Hire me</span>
     </a>
-    <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+    <button class="menu-btn" data-i18n-attr="aria-label:menu" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
       <span></span><span></span>
     </button>
   </header>
 
   <div id="mobile-nav" class="mobile-nav" inert>
-    <a href="/"        data-route="/">Home</a>
-    <a href="/work"    data-route="/work">Work</a>
-    <a href="/journal" data-route="/journal">Journal</a>
-    <a href="/contact" data-route="/contact">Contact</a>
+    <a href="/"        data-route="/"        data-i18n="nav.home">Home</a>
+    <a href="/work"    data-route="/work"    data-i18n="nav.work">Work</a>
+    <a href="/journal" data-route="/journal" data-i18n="nav.journal">Journal</a>
+    <a href="/contact" data-route="/contact" data-i18n="nav.contact">Contact</a>
+    <div class="mobile-lang">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="tr">TR</button>
+      <button type="button" data-lang="ar">AR</button>
+    </div>
   </div>
 
   <main id="main">
@@ -129,89 +146,89 @@
         <div class="hero-inner">
           <p class="hero-meta">
             <span class="dot"></span>
-            Open to work — part-time, full-time, internships. Summer 2026 onward.
+            <span data-i18n="hero.meta">Open to work — part-time, full-time, internships. Summer 2026 onward.</span>
           </p>
-          <h1 class="display" aria-label="Build, break, ship, repeat.">
-            <span class="line"><span data-scramble>Build, break,</span></span>
-            <span class="line"><span data-scramble>ship, repeat.</span></span>
+          <h1 class="display" data-i18n-attr="aria-label:hero.h1.aria" aria-label="Build, break, ship, repeat.">
+            <span class="line"><span data-scramble data-i18n="hero.h1.l1">Build, break,</span></span>
+            <span class="line"><span data-scramble data-i18n="hero.h1.l2">ship, repeat.</span></span>
           </h1>
-          <p class="lede">
+          <p class="lede" data-i18n="hero.lede">
             Software engineering student at AYBU. I build things I'd actually use myself —
             then ship them on GitHub so other people can too.
             Looking for a real role where I can do more of this, with people smarter than me.
           </p>
           <p class="currently">
-            <span class="kbd">now</span>
-            Sharpening full-stack skills the hard way — no AI handholding — to land real full-time work.
+            <span class="kbd" data-i18n="hero.now_kbd">now</span>
+            <span data-i18n="hero.now">Sharpening full-stack skills the hard way — no AI handholding — to land real full-time work.</span>
           </p>
           <div class="hero-cta">
             <a href="/work" data-route="/work" class="btn primary" data-magnet>
-              <span>Selected work</span>
+              <span data-i18n="hero.cta.work">Selected work</span>
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             <a href="/contact" data-route="/contact" class="btn ghost">
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M3 7l9 6 9-6M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Contact me</span>
+              <span data-i18n="hero.cta.contact">Contact me</span>
             </a>
           </div>
         </div>
 
         <div class="hero-scroll" aria-hidden="true">
-          <span>SCROLL</span>
+          <span data-i18n="hero.scroll">SCROLL</span>
           <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 5v14m-6-6 6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </section>
 
       <!-- Stack marquee strip -->
-      <section class="stack-marquee" aria-label="Tech stack">
+      <section class="stack-marquee" data-i18n-attr="aria-label:stack.aria" aria-label="Tech stack">
         <div class="stack-track" id="stack-track"></div>
       </section>
 
       <section class="section about-section">
-        <span class="kicker">02 — About</span>
-        <h2 class="h2 about-h">
+        <span class="kicker" data-i18n="about.kicker">02 — About</span>
+        <h2 class="h2 about-h" data-i18n-html="about.h2">
           Software engineering student in Ankara.
           <em>I learn by building</em>, not by reading.
         </h2>
         <div class="about-grid">
           <div class="about-card">
-            <span class="card-idx">/ 01</span>
-            <h3>Now</h3>
-            <p>Finishing my SE degree at AYBU. Spending most evenings building small tools — open source on GitHub, working in TypeScript and Go.</p>
+            <span class="card-idx" data-i18n="about.c1.idx">/ 01</span>
+            <h3 data-i18n="about.c1.h">Now</h3>
+            <p data-i18n="about.c1.p">Finishing my SE degree at AYBU. Spending most evenings building small tools — open source on GitHub, working in TypeScript and Go.</p>
           </div>
           <div class="about-card">
-            <span class="card-idx">/ 02</span>
-            <h3>How I work</h3>
-            <p>Ship first, polish second. Read source code before docs. Keep dependencies few. Write commit messages I'll understand next year.</p>
+            <span class="card-idx" data-i18n="about.c2.idx">/ 02</span>
+            <h3 data-i18n="about.c2.h">How I work</h3>
+            <p data-i18n="about.c2.p">Ship first, polish second. Read source code before docs. Keep dependencies few. Write commit messages I'll understand next year.</p>
           </div>
           <div class="about-card">
-            <span class="card-idx">/ 03</span>
-            <h3>Looking for</h3>
-            <p>Full-time or part-time work as a frontend / full-stack engineer. Remote, or on the ground in Ankara or İstanbul. Starting Summer 2026.</p>
+            <span class="card-idx" data-i18n="about.c3.idx">/ 03</span>
+            <h3 data-i18n="about.c3.h">Looking for</h3>
+            <p data-i18n="about.c3.p">Full-time or part-time work as a frontend / full-stack engineer. Remote, or on the ground in Ankara or İstanbul. Starting Summer 2026.</p>
           </div>
         </div>
       </section>
 
       <section class="cta-band">
-        <h2>Got an idea? <em>Let's build it.</em></h2>
-        <a class="btn primary lg" href="/contact" data-route="/contact" data-magnet>Start a conversation →</a>
+        <h2 data-i18n-html="cta.h">Got an idea? <em>Let's build it.</em></h2>
+        <a class="btn primary lg" href="/contact" data-route="/contact" data-magnet data-i18n="cta.btn">Start a conversation →</a>
       </section>
     </section>
 
     <!-- ====== WORK ====== -->
     <section class="page" data-page="/work" id="page-work">
       <header class="page-head">
-        <span class="kicker">02 — Selected work</span>
-        <h1 class="h1">Things I&rsquo;ve <em>shipped.</em></h1>
-        <p class="page-lede">Live from GitHub. Hover any card to see stats. Click to view source; if a live demo exists you'll see a "Visit" badge.</p>
+        <span class="kicker" data-i18n="work.kicker">02 — Selected work</span>
+        <h1 class="h1" data-i18n-html="work.h1">Things I&rsquo;ve <em>shipped.</em></h1>
+        <p class="page-lede" data-i18n="work.lede">Live from GitHub. Hover any card to see stats. Click to view source; if a live demo exists you'll see a "Visit" badge.</p>
       </header>
 
       <div class="work-search">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="work-filter" type="search" placeholder="Search projects…" autocomplete="off" spellcheck="false" aria-label="Search projects" />
+        <input id="work-filter" type="search" data-i18n-attr="placeholder:work.search,aria-label:work.search_aria" placeholder="Search projects…" autocomplete="off" spellcheck="false" aria-label="Search projects" />
       </div>
       <div class="work-filters" role="tablist" aria-label="Filter by language">
-        <button class="chip active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="chip active" data-filter="all" role="tab" aria-selected="true" data-i18n="work.filter.all">All</button>
       </div>
 
       <div class="work-layout">
@@ -222,19 +239,19 @@
 
         <aside class="work-aside" aria-label="Project preview">
           <div class="preview" id="preview" data-empty="true">
-            <button type="button" id="preview-close" class="preview-close" aria-label="Close preview">×</button>
+            <button type="button" id="preview-close" class="preview-close" data-i18n-attr="aria-label:work.preview.close" aria-label="Close preview">×</button>
             <div class="preview-banner">
               <div class="preview-avatar"><img id="preview-avatar" alt="" loading="lazy" decoding="async"/></div>
             </div>
             <div class="preview-body" data-lenis-prevent>
               <div class="preview-head">
                 <div>
-                  <h4 id="preview-title">Hover a project</h4>
-                  <span class="preview-owner" id="preview-owner">— preview shows here —</span>
+                  <h4 id="preview-title" data-i18n="work.preview.title">Hover a project</h4>
+                  <span class="preview-owner" id="preview-owner" data-i18n="work.preview.owner">— preview shows here —</span>
                 </div>
                 <span id="preview-lang" class="preview-lang"></span>
               </div>
-              <p class="preview-desc" id="preview-desc">Move your cursor over any card on the left. README, stats, and links appear here.</p>
+              <p class="preview-desc" id="preview-desc" data-i18n="work.preview.desc">Move your cursor over any card on the left. README, stats, and links appear here.</p>
               <div class="preview-readme" id="preview-readme"></div>
               <div class="preview-topics" id="preview-topics"></div>
               <div class="preview-stats">
@@ -248,8 +265,8 @@
                 <span id="preview-updated"></span>
               </div>
               <div class="preview-actions">
-                <a class="action" id="preview-source" href="#" target="_blank" rel="noopener">Source ↗</a>
-                <a class="action live" id="preview-visit" href="#" target="_blank" rel="noopener" hidden>Visit live ↗</a>
+                <a class="action" id="preview-source" href="#" target="_blank" rel="noopener" data-i18n="work.source">Source ↗</a>
+                <a class="action live" id="preview-visit" href="#" target="_blank" rel="noopener" hidden data-i18n="work.visit">Visit live ↗</a>
               </div>
             </div>
           </div>
@@ -257,24 +274,24 @@
       </div>
 
       <p class="work-foot muted">
-        More on <a class="ulink" href="https://github.com/Mohamedattiadev" target="_blank" rel="noopener">github.com/Mohamedattiadev ↗</a>
+        <span data-i18n="work.foot">More on</span> <a class="ulink" href="https://github.com/Mohamedattiadev" target="_blank" rel="noopener">github.com/Mohamedattiadev ↗</a>
       </p>
     </section>
 
     <!-- ====== JOURNAL ====== -->
     <section class="page" data-page="/journal" id="page-journal">
       <header class="page-head">
-        <span class="kicker">03 — Journal</span>
-        <h1 class="h1">Notes &amp; build <em>logs.</em></h1>
-        <p class="page-lede">Drafts saved in your browser. Click <strong>New post</strong> to add one. Pick a template, write markdown, add images.</p>
+        <span class="kicker" data-i18n="journal.kicker">03 — Journal</span>
+        <h1 class="h1" data-i18n-html="journal.h1">Notes &amp; build <em>logs.</em></h1>
+        <p class="page-lede" data-i18n-html="journal.lede">Drafts saved in your browser. Click <strong>New post</strong> to add one. Pick a template, write markdown, add images.</p>
       </header>
 
       <div class="journal-toolbar">
         <button class="btn primary sm owner-only" id="post-new">
           <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          New post
+          <span data-i18n="journal.new">New post</span>
         </button>
-        <span class="muted j-info owner-only">Stored locally · <a href="#" id="post-export" class="ulink">Export</a> · <a href="#" id="post-import" class="ulink">Import</a> · <button class="linkish" id="admin-out">Sign out</button></span>
+        <span class="muted j-info owner-only"><span data-i18n="journal.info_prefix">Stored locally · </span><a href="#" id="post-export" class="ulink" data-i18n="journal.export">Export</a> · <a href="#" id="post-import" class="ulink" data-i18n="journal.import">Import</a> · <button class="linkish" id="admin-out" data-i18n="journal.signout">Sign out</button></span>
         <button class="linkish" id="admin-in" hidden aria-hidden="true"></button>
         <input type="file" id="post-import-file" accept="application/json" hidden>
       </div>
@@ -283,20 +300,20 @@
         <aside class="journal-aside" aria-label="Posts">
           <div class="journal-search">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input id="journal-filter" type="search" placeholder="Filter posts…" autocomplete="off" spellcheck="false" aria-label="Filter posts" />
+            <input id="journal-filter" type="search" data-i18n-attr="placeholder:journal.filter,aria-label:journal.filter_aria" placeholder="Filter posts…" autocomplete="off" spellcheck="false" aria-label="Filter posts" />
           </div>
           <div id="journal-list" class="journal-list" data-lenis-prevent></div>
         </aside>
-        <article id="journal-view" class="journal-view"><p class="muted">Select a post →</p></article>
+        <article id="journal-view" class="journal-view"><p class="muted" data-i18n="journal.select">Select a post →</p></article>
       </div>
     </section>
 
     <!-- ====== CONTACT ====== -->
     <section class="page" data-page="/contact" id="page-contact">
       <header class="page-head">
-        <span class="kicker">04 — Contact</span>
-        <h1 class="contact-h">Let&rsquo;s <em>talk.</em></h1>
-        <p class="page-lede">
+        <span class="kicker" data-i18n="contact.kicker">04 — Contact</span>
+        <h1 class="contact-h" data-i18n-html="contact.h">Let&rsquo;s <em>talk.</em></h1>
+        <p class="page-lede" data-i18n="contact.lede">
           I read every message. Fastest reply over email — usually within a day.
         </p>
       </header>
@@ -306,9 +323,9 @@
         <div class="ch-text">
           <div class="ch-name">
             <strong>Mohamed Attia</strong>
-            <span class="ch-status"><span class="dot-live"></span>Open to work · Summer 2026</span>
+            <span class="ch-status"><span class="dot-live"></span><span data-i18n="contact.status">Open to work · Summer 2026</span></span>
           </div>
-          <p class="ch-meta">
+          <p class="ch-meta" data-i18n="contact.meta">
             Ankara · English, Türkçe, العربية · email reply within a day.
           </p>
         </div>
@@ -316,23 +333,23 @@
 
       <dl class="contact-list">
         <div class="row">
-          <dt>Email</dt>
+          <dt data-i18n="contact.email">Email</dt>
           <dd><a href="mailto:mohamedattia.dev@gmail.com">mohamedattia.dev@gmail.com</a></dd>
         </div>
         <div class="row">
-          <dt>CV</dt>
-          <dd><button type="button" id="cv-open" class="linkish">Preview PDF →</button> <span class="muted">98 KB · updated Jun 2026</span></dd>
+          <dt data-i18n="contact.cv">CV</dt>
+          <dd><button type="button" id="cv-open" class="linkish" data-i18n="contact.cv_btn">Preview PDF →</button> <span class="muted" data-i18n="contact.cv_meta">98 KB · updated Jun 2026</span></dd>
         </div>
         <div class="row">
-          <dt>GitHub</dt>
+          <dt data-i18n="contact.github">GitHub</dt>
           <dd><a href="https://github.com/Mohamedattiadev" target="_blank" rel="noopener">github.com/Mohamedattiadev ↗</a></dd>
         </div>
         <div class="row">
-          <dt>LinkedIn</dt>
+          <dt data-i18n="contact.linkedin">LinkedIn</dt>
           <dd><a href="https://www.linkedin.com/in/mohamed-attia" target="_blank" rel="noopener">linkedin.com/in/mohamed-attia ↗</a></dd>
         </div>
         <div class="row">
-          <dt>X / Twitter</dt>
+          <dt data-i18n="contact.x">X / Twitter</dt>
           <dd><a href="https://x.com/mohamedattiadev" target="_blank" rel="noopener">@mohamedattiadev ↗</a></dd>
         </div>
       </dl>
@@ -344,12 +361,12 @@
         <div class="nf-code" aria-hidden="true">
           <span class="nf-glitch" data-text="404">404</span>
         </div>
-        <h1 class="nf-title">Page not found.</h1>
-        <p class="nf-lede">The URL <code id="nf-url"></code> doesn't match anything here. Probably a typo, an old link, or a future page that hasn't shipped yet.</p>
+        <h1 class="nf-title" data-i18n="404.title">Page not found.</h1>
+        <p class="nf-lede"><span data-i18n="404.lede.before">The URL </span><code id="nf-url"></code><span data-i18n="404.lede.after"> doesn't match anything here. Probably a typo, an old link, or a future page that hasn't shipped yet.</span></p>
         <div class="nf-actions">
-          <a href="/" data-route="/" class="btn primary lg" data-magnet>← Back home</a>
-          <a href="/work" data-route="/work" class="btn ghost">Browse work</a>
-          <a href="/journal" data-route="/journal" class="btn ghost">Read journal</a>
+          <a href="/" data-route="/" class="btn primary lg" data-magnet data-i18n="404.back">← Back home</a>
+          <a href="/work" data-route="/work" class="btn ghost" data-i18n="404.browse">Browse work</a>
+          <a href="/journal" data-route="/journal" class="btn ghost" data-i18n="404.read">Read journal</a>
         </div>
       </div>
     </section>
@@ -365,25 +382,25 @@
     <div class="modal-backdrop" data-close></div>
     <div class="modal-panel">
       <header class="modal-head">
-        <h3 id="post-modal-title">New post</h3>
-        <button class="icon-btn" data-close aria-label="Close">
+        <h3 id="post-modal-title" data-i18n="modal.post.new">New post</h3>
+        <button class="icon-btn" data-close data-i18n-attr="aria-label:modal.close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </header>
       <div class="modal-body" data-lenis-prevent>
         <div class="field-row">
           <label class="field flex-2">
-            <span>Title</span>
-            <input type="text" id="post-title" placeholder="A great headline…" />
+            <span data-i18n="modal.field.title">Title</span>
+            <input type="text" id="post-title" data-i18n-attr="placeholder:modal.field.title_ph" placeholder="A great headline…" />
           </label>
           <label class="field">
-            <span>Date</span>
+            <span data-i18n="modal.field.date">Date</span>
             <input type="date" id="post-date" />
           </label>
           <label class="field">
-            <span>Template</span>
+            <span data-i18n="modal.field.tpl">Template</span>
             <select id="post-template">
-              <option value="">— Use template —</option>
+              <option value="" data-i18n="modal.field.tpl_opt">— Use template —</option>
               <option value="blank">Blank</option>
               <option value="project">Project writeup</option>
               <option value="tutorial">Tutorial / how-to</option>
@@ -411,19 +428,19 @@
         </div>
         <div class="editor-split">
           <label class="field">
-            <span>Body (Markdown)</span>
-            <textarea id="post-body" rows="16" placeholder="# Heading&#10;&#10;Write in markdown…"></textarea>
+            <span data-i18n="modal.field.body">Body (Markdown)</span>
+            <textarea id="post-body" rows="16" data-i18n-attr="placeholder:modal.field.body_ph" placeholder="# Heading&#10;&#10;Write in markdown…"></textarea>
           </label>
           <div class="field">
-            <span>Preview</span>
+            <span data-i18n="modal.field.preview">Preview</span>
             <div id="post-preview" class="post-preview"></div>
           </div>
         </div>
       </div>
       <footer class="modal-foot">
-        <button class="btn ghost sm" data-close>Cancel</button>
-        <button class="btn danger sm" id="post-delete" hidden>Delete</button>
-        <button class="btn primary sm" id="post-save">Save post</button>
+        <button class="btn ghost sm" data-close data-i18n="modal.cancel">Cancel</button>
+        <button class="btn danger sm" id="post-delete" hidden data-i18n="modal.delete">Delete</button>
+        <button class="btn primary sm" id="post-save" data-i18n="modal.save">Save post</button>
       </footer>
     </div>
   </div>
@@ -432,12 +449,12 @@
   <div class="dialog" id="dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
     <div class="dialog-backdrop" data-dclose></div>
     <div class="dialog-panel" data-lenis-prevent>
-      <h4 id="dialog-title">Confirm</h4>
+      <h4 id="dialog-title" data-i18n="dlg.confirm">Confirm</h4>
       <p id="dialog-message"></p>
       <div id="dialog-fields" class="dialog-fields"></div>
       <div class="dialog-foot">
-        <button id="dialog-cancel" class="btn ghost sm">Cancel</button>
-        <button id="dialog-ok" class="btn primary sm">OK</button>
+        <button id="dialog-cancel" class="btn ghost sm" data-i18n="dlg.cancel">Cancel</button>
+        <button id="dialog-ok" class="btn primary sm" data-i18n="dlg.ok">OK</button>
       </div>
     </div>
   </div>
@@ -447,11 +464,11 @@
     <div class="modal-backdrop" data-close></div>
     <div class="modal-panel iframe-panel">
       <header class="modal-head">
-        <h3 id="iframe-title">Preview</h3>
+        <h3 id="iframe-title" data-i18n="modal.iframe.title">Preview</h3>
         <div class="modal-head-actions">
-          <a id="iframe-open" class="btn ghost sm" href="#" target="_blank" rel="noopener">Open in tab ↗</a>
-          <a id="iframe-download" class="btn primary sm" href="#" download hidden>Download</a>
-          <button class="icon-btn" data-close aria-label="Close">
+          <a id="iframe-open" class="btn ghost sm" href="#" target="_blank" rel="noopener" data-i18n="modal.iframe.open">Open in tab ↗</a>
+          <a id="iframe-download" class="btn primary sm" href="#" download hidden data-i18n="modal.iframe.dl">Download</a>
+          <button class="icon-btn" data-close data-i18n-attr="aria-label:modal.close" aria-label="Close">
             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -459,7 +476,7 @@
       <div class="iframe-host">
         <iframe id="iframe-frame" title="Preview" src="about:blank" loading="lazy" referrerpolicy="no-referrer"></iframe>
         <div class="iframe-fallback" id="iframe-fallback" hidden>
-          <p>Preview blocked by the site. <a id="iframe-fallback-open" class="ulink" href="#" target="_blank" rel="noopener">Open it in a new tab →</a></p>
+          <p><span data-i18n="modal.iframe.blocked">Preview blocked by the site.</span> <a id="iframe-fallback-open" class="ulink" href="#" target="_blank" rel="noopener" data-i18n="modal.iframe.openlink">Open it in a new tab →</a></p>
         </div>
       </div>
     </div>

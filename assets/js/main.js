@@ -8,6 +8,9 @@ const GH_USER = "Mohamedattiadev";
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isTouch = matchMedia("(hover:none),(pointer:coarse)").matches;
 import { slugify, readingTime, escapeHtml, escapeAttr, byDateDesc, routeFromPath } from "./utils.js";
+import { initI18n, setLang, getLang, t, SUPPORTED } from "./i18n.js";
+
+initI18n();
 
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1446,3 +1449,46 @@ async function prefetchForOffline() {
 }
 const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
 idle(() => prefetchForOffline(), { timeout: 4000 });
+
+/* ===== Language switcher ===== */
+(function langSwitch() {
+  const wrap = $(".lang-switch");
+  if (!wrap) return;
+  const btn   = wrap.querySelector(".lang-btn");
+  const menu  = wrap.querySelector(".lang-menu");
+  const label = wrap.querySelector("[data-lang-current]");
+  const refreshLabel = () => { if (label) label.textContent = getLang().toUpperCase(); };
+  const close = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+  const open  = () => { menu.hidden = false; btn.setAttribute("aria-expanded", "true"); };
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.hidden ? open() : close();
+  });
+  document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) close(); });
+  menu.addEventListener("click", (e) => {
+    const li = e.target.closest("[data-lang]");
+    if (!li) return;
+    const lang = li.getAttribute("data-lang");
+    if (SUPPORTED.includes(lang)) setLang(lang);
+    close();
+  });
+  // mobile-nav buttons
+  document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const lang = el.getAttribute("data-lang");
+      if (SUPPORTED.includes(lang)) setLang(lang);
+    });
+  });
+  refreshLabel();
+  window.addEventListener("i18n:change", () => {
+    refreshLabel();
+    // re-mark active mobile-lang button
+    document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
+      el.classList.toggle("active", el.getAttribute("data-lang") === getLang());
+    });
+  });
+  // initial active mark
+  document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
+    el.classList.toggle("active", el.getAttribute("data-lang") === getLang());
+  });
+})();
