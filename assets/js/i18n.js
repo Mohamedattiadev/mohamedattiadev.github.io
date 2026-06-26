@@ -363,7 +363,7 @@ const DICTS = {
     "work.preview.desc":    "حرّك المؤشر فوق أي بطاقة على الجانب. ستظهر README والإحصاءات والروابط هنا.",
     "work.preview.close":   "إغلاق المعاينة",
     "work.source":          "الكود ↗",
-    "work.visit":           "زيارة العرض الحي ↗",
+    "work.visit":           "زيارة ↗",
     "work.foot":            "المزيد على",
     "work.card.source":     "الكود",
     "work.card.visit":      "زيارة",
