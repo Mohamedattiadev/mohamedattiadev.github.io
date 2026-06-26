@@ -172,7 +172,23 @@ html[dir="rtl"] .journal-view{direction:ltr;text-align:left}
 html[dir="rtl"] .contact-list dd,
 html[dir="rtl"] .post-preview,
 html[dir="rtl"] .preview-desc,
-html[dir="rtl"] .preview-readme{unicode-bidi:plaintext}
+html[dir="rtl"] .preview-readme,
+html[dir="rtl"] .about-card p,
+html[dir="rtl"] .page-lede,
+html[dir="rtl"] .lede,
+html[dir="rtl"] .currently,
+html[dir="rtl"] .hero-meta,
+html[dir="rtl"] .ch-meta{unicode-bidi:plaintext}
+/* Journal page: post bodies are predominantly English markdown; keep LTR even under AR chrome */
+html[dir="rtl"] #page-journal,
+html[dir="rtl"] .journal-toolbar,
+html[dir="rtl"] .journal-layout,
+html[dir="rtl"] .journal-aside,
+html[dir="rtl"] .journal-search,
+html[dir="rtl"] .journal-search input{direction:ltr;text-align:left}
+/* But keep the journal page-head (translated title + lede) RTL */
+html[dir="rtl"] #page-journal > .page-head{direction:rtl;text-align:right}
+html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
 
 /* ===== Page system ===== */
 .page{display:none;min-height:60vh;padding-top:80px}

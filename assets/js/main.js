@@ -563,15 +563,15 @@ async function initWork() {
           ${r.language ? `<span class="lang">${escapeHtml(r.language)}</span>` : ``}
         </div>
         <h3>${escapeHtml(r.name)}</h3>
-        ${r.description ? `<p class="desc">${escapeHtml(r.description)}</p>` : `<p class="desc muted">No description.</p>`}
+        ${r.description ? `<p class="desc">${escapeHtml(r.description)}</p>` : `<p class="desc muted">${t("work.card.no_desc")}</p>`}
         <div class="actions">
           ${r.html_url ? `<a class="action" href="${r.html_url}" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.33.96.1-.74.4-1.26.72-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.45.11-3.03 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.74.11 3.03.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.35.78 1.05.78 2.12v3.15c0 .31.21.68.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
-            Source
-          </a>` : `<span class="action muted" title="Private repository">🔒 Private</span>`}
+            ${t("work.card.source")}
+          </a>` : `<span class="action muted" title="${escapeAttr(t("work.card.private_t"))}">🔒 ${t("work.card.private")}</span>`}
           ${live ? `<a class="action live" href="${live}" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M21 3l-9 9M5 5h6v2H7v10h10v-4h2v6H5z"/></svg>
-            Visit
+            ${t("work.card.visit")}
           </a>` : ``}
         </div>
       `;
@@ -591,18 +591,18 @@ async function initWork() {
         pager = document.createElement("nav");
         pager.id = "pager";
         pager.className = "pager";
-        pager.setAttribute("aria-label", "Pagination");
+        pager.setAttribute("aria-label", t("work.pager.aria"));
         // append OUTSIDE work-layout so it doesn't steal the preview column
         const layout = $(".work-layout");
         layout.parentNode.insertBefore(pager, layout.nextSibling);
       }
       const total = Math.max(1, Math.ceil(filteredRepos().length / PER_PAGE));
       if (total <= 1) { pager.innerHTML = ""; return; }
-      let html = `<button class="page-btn" data-page="prev" ${page<=1?'disabled':''}>‹ Prev</button>`;
+      let html = `<button class="page-btn" data-page="prev" ${page<=1?'disabled':''}>${t("work.pager.prev")}</button>`;
       for (let p = 1; p <= total; p++) {
         html += `<button class="page-btn ${p===page?'active':''}" data-page="${p}">${p}</button>`;
       }
-      html += `<button class="page-btn" data-page="next" ${page>=total?'disabled':''}>Next ›</button>`;
+      html += `<button class="page-btn" data-page="next" ${page>=total?'disabled':''}>${t("work.pager.next")}</button>`;
       pager.innerHTML = html;
     };
 
@@ -1482,10 +1482,13 @@ idle(() => prefetchForOffline(), { timeout: 4000 });
   refreshLabel();
   window.addEventListener("i18n:change", () => {
     refreshLabel();
-    // re-mark active mobile-lang button
     document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
       el.classList.toggle("active", el.getAttribute("data-lang") === getLang());
     });
+    // Re-render dynamic content with new translations
+    const route = currentRoute();
+    if (route === "/work") { inited.work = false; renderRoute(); }
+    try { ScrollTrigger.refresh(); } catch {}
   });
   // initial active mark
   document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
