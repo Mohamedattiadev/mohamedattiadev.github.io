@@ -156,6 +156,23 @@ html[dir="rtl"] .contact-list dd,
 html[dir="rtl"] .contact-list dt{text-align:right}
 html[dir="rtl"] .nf-actions,
 html[dir="rtl"] .hero-cta{direction:rtl}
+/* Keep English-only content visually LTR under RTL chrome */
+html[dir="rtl"] .stack-marquee,
+html[dir="rtl"] .stack-track,
+html[dir="rtl"] .work-filters,
+html[dir="rtl"] .work-search,
+html[dir="rtl"] .grid,
+html[dir="rtl"] .card,
+html[dir="rtl"] .work-aside,
+html[dir="rtl"] .preview,
+html[dir="rtl"] .preview-body,
+html[dir="rtl"] .journal-list,
+html[dir="rtl"] .journal-view{direction:ltr;text-align:left}
+/* Mixed content: per-element auto direction (English URL vs Arabic label) */
+html[dir="rtl"] .contact-list dd,
+html[dir="rtl"] .post-preview,
+html[dir="rtl"] .preview-desc,
+html[dir="rtl"] .preview-readme{unicode-bidi:plaintext}
 
 /* ===== Page system ===== */
 .page{display:none;min-height:60vh;padding-top:80px}
