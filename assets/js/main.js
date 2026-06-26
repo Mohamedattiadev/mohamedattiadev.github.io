@@ -365,17 +365,21 @@ function buildStackMarquee() {
     `<span class="stack-item"><img src="https://cdn.simpleicons.org/${slug}/a78bfa" alt="" width="20" height="20" loading="lazy" decoding="async"/><span>${name}</span></span>`
   ).join("");
   const render = () => {
-    // Tile enough copies so a single set is wider than viewport, then double for seamless loop
     track.innerHTML = itemHTML; // one copy to measure
-    const oneW = track.scrollWidth || 1;
+    const oneW = track.scrollWidth;
     const vw = window.innerWidth;
-    const copies = Math.max(2, Math.ceil(vw / oneW) + 1);
+    // Guard: if measurement failed (icons not yet laid out), fall back to safe count
+    let copies;
+    if (!oneW || oneW < 50) copies = 3;
+    else copies = Math.min(6, Math.max(2, Math.ceil(vw / oneW) + 1));
     track.innerHTML = itemHTML.repeat(copies);
     if (stackTween) { stackTween.kill(); stackTween = null; }
     if (reduceMotion) return;
-    const distancePct = 100 / copies; // shift by exactly one copy
-    const px = (oneW * distancePct) / 100;
-    const seconds = Math.max(20, px / 70); // ~70px/sec
+    const distancePct = 100 / copies;
+    const onePx = oneW && oneW > 50 ? oneW : 800;
+    // Slower on small screens so it doesn't feel like a strobe
+    const pps = matchMedia("(max-width:600px)").matches ? 30 : 60;
+    const seconds = Math.max(20, onePx / pps);
     stackTween = gsap.to(track, {
       xPercent: -distancePct,
       duration: seconds,
@@ -383,7 +387,8 @@ function buildStackMarquee() {
       repeat: -1,
     });
   };
-  requestAnimationFrame(render);
+  // Wait for layout + a couple frames so img dimensions settle before measuring
+  requestAnimationFrame(() => requestAnimationFrame(render));
   // Rebuild on resize so the loop stays seamless on any viewport
   let rt = null;
   addEventListener("resize", () => {
@@ -595,7 +600,7 @@ async function initWork() {
             <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.33.96.1-.74.4-1.26.72-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.45.11-3.03 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.74.11 3.03.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.35.78 1.05.78 2.12v3.15c0 .31.21.68.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
             ${t("work.card.source")}
           </a>` : `<span class="action muted" title="${escapeAttr(t("work.card.private_t"))}">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 4a4 4 0 0 1 8 0v2h.5A1.5 1.5 0 0 1 14 7.5v6A1.5 1.5 0 0 1 12.5 15h-9A1.5 1.5 0 0 1 2 13.5v-6A1.5 1.5 0 0 1 3.5 6H4V4Zm1.5 2h5V4a2.5 2.5 0 0 0-5 0v2Z"/></svg>
             ${t("work.card.private")}
           </span>`}
           ${live ? `<a class="action live" href="${live}" target="_blank" rel="noopener">
@@ -1507,6 +1512,11 @@ idle(() => prefetchForOffline(), { timeout: 4000 });
     el.addEventListener("click", () => {
       const lang = el.getAttribute("data-lang");
       if (SUPPORTED.includes(lang)) setLang(lang);
+      // Close mobile menu so the new layout is actually visible
+      const mn = document.querySelector("#mobile-nav");
+      const mb = document.querySelector(".menu-btn");
+      if (mn) { mn.classList.remove("open"); mn.setAttribute("inert", ""); }
+      if (mb) mb.setAttribute("aria-expanded", "false");
     });
   });
   refreshLabel();
