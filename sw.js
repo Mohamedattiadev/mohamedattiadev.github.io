@@ -2,7 +2,7 @@
 // Strategy: precache app shell, stale-while-revalidate for data/CDN,
 // cache-first for images and library bundles, offline fallback.
 
-const VERSION = "v20";
+const VERSION = "v21";
 const SHELL = `shell-${VERSION}`;
 const DATA = `data-${VERSION}`;
 const IMG = `img-${VERSION}`;

@@ -528,14 +528,25 @@ async function initWork() {
     if (cached && Date.now() - cached.t < TTL) {
       repos = cached.d;
     } else {
-      try {
-        const r = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`);
+      const fetchRepos = async () => {
+        const r = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`, { cache: "no-store" });
+        if (r.status === 403 || r.status === 429) throw new Error("rate-limited");
         if (!r.ok) throw new Error("GitHub API " + r.status);
-        repos = await r.json();
+        return r.json();
+      };
+      try {
+        repos = await fetchRepos();
         localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), d: repos }));
       } catch (err) {
+        // Try once more after short delay (handles transient network/CDN hiccups on mobile)
         if (cached) { repos = cached.d; }
-        else throw err;
+        else {
+          try {
+            await new Promise(r => setTimeout(r, 1500));
+            repos = await fetchRepos();
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), d: repos }));
+          } catch (err2) { throw err2; }
+        }
       }
     }
     repos = repos
@@ -794,7 +805,9 @@ async function initWork() {
     });
   } catch (e) {
     console.warn(e);
-    grid.innerHTML = `<p class="muted">${t("work.load_failed")} <a class="ulink" href="https://github.com/${GH_USER}" target="_blank" rel="noopener">${t("work.view_github")}</a></p>`;
+    grid.innerHTML = `<p class="muted">${t("work.load_failed")} <button class="linkish" id="work-retry" style="margin:0 .4rem">${t("work.retry")}</button> · <a class="ulink" href="https://github.com/${GH_USER}" target="_blank" rel="noopener">${t("work.view_github")}</a></p>`;
+    const retry = document.querySelector("#work-retry");
+    if (retry) retry.addEventListener("click", () => { inited.work = false; renderRoute(); });
   }
 }
 

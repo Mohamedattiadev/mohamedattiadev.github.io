@@ -506,7 +506,8 @@ html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
 .journal-list .post-item.active .glyph{color:var(--accent)}
 .journal-list .post-item .ttl{font-size:.82rem;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .journal-list .post-item .dt{font-size:.62rem;color:var(--muted);flex:none}
-.journal-view{min-height:300px;line-height:1.75;font-size:.94rem;max-width:68ch;color:var(--muted-2)}
+.journal-view{min-height:300px;line-height:1.75;font-size:.94rem;max-width:68ch;color:var(--muted-2);min-width:0;overflow-wrap:break-word}
+.journal-view *{min-width:0;max-width:100%}
 .journal-view .post-actions{display:flex;gap:.5rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--line)}
 .journal-view h1{font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:-.03em;margin:0 0 1rem;line-height:1.15;color:var(--fg);font-weight:600}
 .journal-view h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.8rem;letter-spacing:-.015em;color:var(--fg);font-weight:600;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
@@ -775,6 +776,12 @@ body.owner #visitor-note{display:none!important}
   .contact-list dd{font-size:.82rem}
   .contact-list dd a{overflow-wrap:anywhere;word-break:break-all}
   .contact-list .muted{display:block;margin-left:0;margin-top:.25rem;font-size:.68rem}
+  .journal-view{font-size:.86rem;line-height:1.65}
+  .journal-view h1{font-size:1.35rem;line-height:1.2;letter-spacing:-.02em;overflow-wrap:break-word}
+  .journal-view h2{font-size:1.05rem}
+  .journal-view h3{font-size:.95rem}
+  .journal-view pre{font-size:.74rem;padding:.7rem .8rem}
+  .post-meta-line{font-size:.65rem;gap:.4rem}
   .iframe-panel{width:100%;max-width:100%;max-height:100vh;height:100vh;border-radius:0}
   .iframe-host{min-height:0;flex:1}
   .iframe-host iframe{min-height:0}
