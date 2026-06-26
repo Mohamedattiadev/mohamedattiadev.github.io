@@ -455,8 +455,9 @@ html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
 /* ===== Journal ===== */
 .journal-toolbar{max-width:1280px;margin:0 auto 2rem;padding:0 1.5rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem}
 .j-info{font-size:.74rem;letter-spacing:.04em}
-.journal-layout{max-width:1280px;margin:0 auto 6rem;padding:0 1.5rem;display:grid;grid-template-columns:300px 1fr;gap:2.5rem}
-@media (max-width:900px){.journal-layout{grid-template-columns:1fr;gap:1.5rem}}
+.journal-layout{max-width:1280px;margin:0 auto 6rem;padding:0 1.5rem;display:grid;grid-template-columns:300px minmax(0,1fr);gap:2.5rem}
+@media (max-width:900px){.journal-layout{grid-template-columns:minmax(0,1fr);gap:1.5rem}}
+.journal-layout > *{min-width:0;max-width:100%}
 .journal-aside{
   display:flex;flex-direction:column;gap:.5rem;
   position:sticky;top:88px;align-self:start;
