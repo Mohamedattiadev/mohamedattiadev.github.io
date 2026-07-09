@@ -1,9 +1,11 @@
 {
   "_comment": "Tracks which queue files have been published. Maintained by scripts/publish-post.mjs.",
   "weeks": {
-    "2026-W26": "side-project-readme"
+    "2026-W26": "side-project-readme",
+    "2026-W28": "commit-message-first"
   },
   "slugs": [
-    "side-project-readme"
+    "side-project-readme",
+    "commit-message-first"
   ]
 }

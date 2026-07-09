@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_commit-message-first_2026-07-09",
+    "title": "Write the commit message first",
+    "date": "2026-07-09",
+    "body": "# Write the commit message first\n\nBefore I write the code, I open a fake commit message in my head:\n\n> fix: handle empty cart in checkout total\n\nThen I ask: is that one sentence? Does it describe one thing? If yes, I start coding. If not, I split the work.\n\nThis trick saves me from \"big messy patch\" syndrome. When I cannot summarise the change in one line, the change is too big. Smaller changes are easier to review, easier to revert, and easier to remember.\n\nI learned this from older engineers who write five-word commits like `fix off-by-one in batch loop` and somehow ship the right thing every time. Their secret is not magic. They decided what they were doing *before* they did it.\n\nCommit messages are not paperwork. They are a planning tool that doubles as documentation.\n\nType yours before you type your code.",
+    "source": "auto"
+  },
+  {
     "id": "demo_long_5k_18mo",
     "title": "30 side projects in 18 months — what I actually learned",
     "date": "2026-06-23",
