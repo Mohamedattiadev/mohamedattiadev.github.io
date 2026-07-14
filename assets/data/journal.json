@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_smallest-cli_2026-07-14",
+    "title": "The smallest CLI I ever shipped",
+    "date": "2026-07-14",
+    "body": "# The smallest CLI I ever shipped\n\nIt had three lines. It was useful for two years.\n\nI needed to print my current Git branch in big letters before each commit. So I wrote:\n\n```bash\n#!/bin/bash\nfiglet \"$(git branch --show-current)\"\n```\n\nI put it in `~/bin/branch`, ran `chmod +x`, and used it 50 times a week.\n\nBig tools are fun to build. Small tools are easier to keep. I never had to update this one. It never broke. It did one thing.\n\nThe lesson I keep learning: not every problem needs a framework. Sometimes three lines and a shell are enough. Save the big projects for the days you have real energy.\n\nMost of my best tools fit on one screen.",
+    "source": "auto"
+  },
+  {
     "id": "auto_commit-message-first_2026-07-09",
     "title": "Write the commit message first",
     "date": "2026-07-09",
