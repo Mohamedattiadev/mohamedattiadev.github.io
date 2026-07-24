@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_delete-vs-comment_2026-07-24",
+    "title": "Delete code or comment it out?",
+    "date": "2026-07-24",
+    "body": "# Delete code or comment it out?\n\nDelete. Almost always delete.\n\nCommented-out code is a small lie. It tells the next reader: *this might come back, be careful*. Most of the time it never comes back. But everyone slows down to read it anyway.\n\nYou have git. Git remembers everything. If you need the old code, it is one `git log -p` away. Your repo is the time machine. Your file is for the present.\n\nI keep two exceptions:\n\n1. **One-line examples in tests** — `// expect(x).toBe(5)` near a tricky case is fine.\n2. **Temporary debug prints during a session** — but I remove them before commit, no exception.\n\nIf you find yourself writing `// TODO: remove this`, just remove it now. Future-you is busier than today-you.\n\nSmaller files = fewer places for bugs to hide.",
+    "source": "auto"
+  },
+  {
     "id": "auto_smallest-cli_2026-07-14",
     "title": "The smallest CLI I ever shipped",
     "date": "2026-07-14",

@@ -3,11 +3,13 @@
   "weeks": {
     "2026-W26": "side-project-readme",
     "2026-W28": "commit-message-first",
-    "2026-W29": "smallest-cli"
+    "2026-W29": "smallest-cli",
+    "2026-W30": "delete-vs-comment"
   },
   "slugs": [
     "side-project-readme",
     "commit-message-first",
-    "smallest-cli"
+    "smallest-cli",
+    "delete-vs-comment"
   ]
 }
