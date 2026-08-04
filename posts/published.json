@@ -4,12 +4,14 @@
     "2026-W26": "side-project-readme",
     "2026-W28": "commit-message-first",
     "2026-W29": "smallest-cli",
-    "2026-W30": "delete-vs-comment"
+    "2026-W30": "delete-vs-comment",
+    "2026-W32": "reading-prs-for-fun"
   },
   "slugs": [
     "side-project-readme",
     "commit-message-first",
     "smallest-cli",
-    "delete-vs-comment"
+    "delete-vs-comment",
+    "reading-prs-for-fun"
   ]
 }

@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_reading-prs-for-fun_2026-08-04",
+    "title": "Reading pull requests for fun",
+    "date": "2026-08-04",
+    "body": "# Reading pull requests for fun\n\nTwice a week I open a random pull request on a project I use. I do not comment. I just read.\n\nWhy? Because finished code teaches you nothing about how it was made. Pull requests show the conversation: someone proposes, someone pushes back, the patch changes shape, and finally it lands.\n\nI learn three things from each one:\n\n1. **How experienced people write commit messages.** Most are short. None are clever.\n2. **How they answer \"why\" questions.** Often by linking an issue, not by writing a wall of text.\n3. **What gets rejected and why.** This is the most useful part. The patches that *almost* shipped show me the line between \"okay\" and \"yes\".\n\nPick a project. Open the closed-PR list. Sort by recently merged. Read three. You will be a slightly better engineer by Friday.\n\nFree school, every day.",
+    "source": "auto"
+  },
+  {
     "id": "auto_delete-vs-comment_2026-07-24",
     "title": "Delete code or comment it out?",
     "date": "2026-07-24",
