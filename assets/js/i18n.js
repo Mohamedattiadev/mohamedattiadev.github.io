@@ -107,7 +107,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — Journal",
     "journal.h1":           "Notes &amp; build <em>logs.</em>",
-    "journal.lede":         "Notes from the things I am learning, written while I learn them. Right now: one post every 4 days from <strong>Terminal 101</strong>, my course for people new to the terminal.",
+    "journal.lede":         "Notes on the things I am learning, written while I learn them — code, tools, the terminal, and whatever else I am digging into.",
     "journal.new":          "New post",
     "journal.info_prefix":  "Stored locally · ",
     "journal.export":       "Export",
@@ -269,7 +269,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — Günlük",
     "journal.h1":           "Notlar ve <em>yapım logları.</em>",
-    "journal.lede":         "Öğrendiğim şeylerden notlar, öğrenirken yazıldı. Şu anda: <strong>Terminal 101</strong>'den 4 günde bir yeni yazı, terminale yeni başlayanlar için hazırladığım kurs.",
+    "journal.lede":         "Öğrendiğim şeylerle ilgili notlar, öğrenirken yazıldı — kod, araçlar, terminal ve o sıra kafamı meşgul eden her şey.",
     "journal.new":          "Yeni gönderi",
     "journal.info_prefix":  "Yerel olarak saklanır · ",
     "journal.export":       "Dışa aktar",
@@ -431,7 +431,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — المدوّنة",
     "journal.h1":           "ملاحظات و<em>سجلات بناء.</em>",
-    "journal.lede":         "ملاحظات عن الأشياء التي أتعلمها، مكتوبة أثناء تعلمي لها. حالياً: منشور كل 4 أيام من <strong>Terminal 101</strong>، دورتي للمبتدئين في الطرفية.",
+    "journal.lede":         "ملاحظات عن الأشياء التي أتعلمها، أكتبها أثناء تعلّمها — الكود، الأدوات، الطرفية، وكل ما أنشغل به.",
     "journal.new":          "منشور جديد",
     "journal.info_prefix":  "مخزّن محلياً · ",
     "journal.export":       "تصدير",

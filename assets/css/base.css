@@ -155,6 +155,11 @@ button{font:inherit;cursor:pointer;background:none;border:0;color:inherit;paddin
 /* RTL adjustments */
 html[dir="rtl"]{}
 html[dir="rtl"] body{font-family:var(--mono)}
+/* Keep the top bar in LTR order under AR: brand left, menu button right */
+html[dir="rtl"] .topbar{direction:ltr}
+html[dir="rtl"] .topbar .navlink,
+html[dir="rtl"] .topbar .brand,
+html[dir="rtl"] .topbar .btn.pill{unicode-bidi:plaintext}
 html[dir="rtl"] .hero-cta svg,
 html[dir="rtl"] .btn svg{transform:scaleX(-1)}
 html[dir="rtl"] .ch-name,
@@ -191,11 +196,11 @@ html[dir="rtl"] .currently,
 html[dir="rtl"] .hero-meta,
 html[dir="rtl"] .ch-meta{unicode-bidi:plaintext}
 /* Journal page: post bodies are predominantly English markdown; keep LTR even under AR chrome */
+/* (journal-search direction handled above for RTL) */
 html[dir="rtl"] #page-journal,
 html[dir="rtl"] .journal-toolbar,
 html[dir="rtl"] .journal-layout,
-html[dir="rtl"] .journal-aside,
-/* (journal-search direction handled above for RTL) */
+html[dir="rtl"] .journal-aside{direction:ltr;text-align:left}
 /* But keep the journal page-head (translated title + lede) RTL */
 html[dir="rtl"] #page-journal > .page-head{direction:rtl;text-align:right}
 html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
