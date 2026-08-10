@@ -523,6 +523,9 @@ html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
 .journal-view .post-actions{display:flex;gap:.5rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--line)}
 .journal-view h1{font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:-.03em;margin:0 0 1rem;line-height:1.15;color:var(--fg);font-weight:600}
 .journal-view h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.8rem;letter-spacing:-.015em;color:var(--fg);font-weight:600;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+/* The post title is an h2 for heading order (the page owns the h1) but has to
+   keep reading as the title, so it takes the old h1 styling. */
+.journal-view h2.post-title{font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:-.03em;margin:0 0 1rem;line-height:1.15;font-weight:600;padding-bottom:0;border-bottom:0}
 .journal-view h3{font-size:1.02rem;margin-top:1.8rem;margin-bottom:.55rem;letter-spacing:-.005em;color:var(--accent);font-weight:600;display:flex;align-items:baseline;gap:.45rem}
 .journal-view h3::before{content:"#";font-family:var(--mono);color:var(--muted);font-weight:500;opacity:.7}
 .journal-view h4{font-size:.9rem;margin-top:1.4rem;margin-bottom:.4rem;color:var(--fg);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
@@ -685,6 +688,17 @@ html[dir="rtl"] .to-top{right:auto;left:1.2rem}
 .contact-list .muted{font-size:.74rem;margin-left:.5rem}
 .linkish{font:inherit;color:var(--fg);background:none;border:0;padding:0;cursor:pointer;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease}
 .linkish:hover{color:var(--accent);border-bottom-color:var(--accent)}
+/* Touch targets. Measured at 375px, the card actions came out 29px tall and
+   the contact links and journal toolbar 17-18px, which is under the 24px WCAG
+   minimum and far under what a thumb actually hits. Only raised on touch
+   pointers so the desktop layout keeps its tighter spacing. */
+@media (hover:none),(pointer:coarse){
+  .card .action{min-height:36px;padding:.5rem .8rem}
+  .contact-list dd a,.contact-list dd .linkish{display:inline-flex;align-items:center;min-height:36px}
+  .j-info a,.j-info .linkish{display:inline-flex;align-items:center;min-height:32px}
+  .journal-list .post-item,.journal-tree-year,.journal-tree-month{min-height:36px}
+  .pager .page-btn{min-width:36px;min-height:36px}
+}
 @media (max-width:600px){
   .contact-list .row{grid-template-columns:1fr;gap:.2rem;padding:.85rem 0}
   .contact-list dd{font-size:.95rem}

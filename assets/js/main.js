@@ -280,6 +280,21 @@ function goRoute(route, replace = false) {
   renderRoute();
 }
 const KNOWN_ROUTES = new Set(["/", "/work", "/journal", "/contact", "/admin"]);
+
+/* Every route used to leave the tab reading "Mohamed Attia — Software
+   Engineer", so browser history, bookmarks and two open tabs were
+   indistinguishable. Keyed off the route and re-applied on a language change. */
+const ROUTE_TITLE_KEYS = {
+  "/":        "meta.title.home",
+  "/work":    "meta.title.work",
+  "/journal": "meta.title.journal",
+  "/contact": "meta.title.contact",
+  "/404":     "meta.title.notfound",
+};
+function setPageTitle(route) {
+  const key = ROUTE_TITLE_KEYS[route];
+  document.title = key ? t(key) : t("meta.title.home");
+}
 function renderRoute() {
   let route = currentRoute();
   // Cleanup transient UI from previous route
@@ -299,16 +314,25 @@ function renderRoute() {
     adminSignIn();
     // show journal page in background
     $$(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === "/journal"));
+    setPageTitle("/journal");
     return;
   }
   $$(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === route));
-  $$(".navlink, #mobile-nav a").forEach((a) => a.classList.toggle("active", a.dataset.route === route));
+  $$(".navlink, #mobile-nav a").forEach((a) => {
+    const on = a.dataset.route === route;
+    a.classList.toggle("active", on);
+    // The active class was purely visual, so a screen reader had no way to tell
+    // which of the four pages it was on.
+    if (on) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  setPageTitle(route);
   if (route !== "/journal" && typeof hidePostRail === "function") hidePostRail();
   if (route === "/journal" && typeof activePostId !== "undefined" && activePostId) {
     // Returning to journal — re-attach rail to the already-rendered post body
     const v = $("#journal-view");
     if (v) {
-      const hs = [...v.querySelectorAll("h2, h3")];
+      const hs = [...v.querySelectorAll("h2:not(.post-title), h3")];
       if (hs.length >= 2) buildPostRail(v, hs);
     }
   }
@@ -434,12 +458,13 @@ function initHome() {
    ==================================== */
 /* Manual overrides for live demos (use when homepage points wrong place).
    Key = repo name. Value = full https URL. */
-const LIVE_DEMOS = {
-  // dev-101 has Pages on, so the guessed root URL was shown as the live demo,
-  // but the repo has no index.html at its root and that URL 404s. The course
-  // player is the real page worth linking.
-  "dev-101": "https://mohamedattiadev.github.io/dev-101/Terminal-101/watch.html",
-};
+const LIVE_DEMOS = {};
+
+/* Repos that should show Source only, no live-demo button. Needed because
+   `has_pages` alone would make one up: dev-101 has Pages on for the course
+   player, but its root URL 404s and it is a repo you read, not a site you
+   visit. */
+const NO_LIVE_DEMO = new Set(["dev-101"]);
 
 /* Hide these repos from the Work page (case-sensitive match on repo name) */
 const HIDE_REPOS = new Set([
@@ -500,6 +525,7 @@ const PINNED_PROJECTS = [
 ];
 
 function liveURL(r) {
+  if (NO_LIVE_DEMO.has(r.name)) return null;
   if (LIVE_DEMOS[r.name]) return LIVE_DEMOS[r.name];
   // GitHub Pages enabled on this repo → predictable URL.
   // Still trusted on a fork, because Pages there is something you turned on
@@ -683,7 +709,7 @@ async function initWork() {
       if (total <= 1) { pager.innerHTML = ""; return; }
       let html = `<button class="page-btn" data-page="prev" ${page<=1?'disabled':''}>${t("work.pager.prev")}</button>`;
       for (let p = 1; p <= total; p++) {
-        html += `<button class="page-btn ${p===page?'active':''}" data-page="${p}">${p}</button>`;
+        html += `<button class="page-btn ${p===page?'active':''}" data-page="${p}"${p===page?' aria-current="page"':''}>${p}</button>`;
       }
       html += `<button class="page-btn" data-page="next" ${page>=total?'disabled':''}>${t("work.pager.next")}</button>`;
       pager.innerHTML = html;
@@ -1131,7 +1157,17 @@ async function openPost(id) {
   // build TOC from h2/h3
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
-  const headings = [...tmp.querySelectorAll("h2, h3")];
+  // The journal page already owns the page-level <h1>, so a post body opening
+  // with `# title` put a second h1 on the same page. Demote it to an h2 that
+  // still looks like a title, and keep it out of the section rail.
+  const bodyH1 = tmp.querySelector("h1");
+  if (bodyH1) {
+    const h2 = document.createElement("h2");
+    h2.className = "post-title";
+    h2.innerHTML = bodyH1.innerHTML;
+    bodyH1.replaceWith(h2);
+  }
+  const headings = [...tmp.querySelectorAll("h2:not(.post-title), h3")];
   const slugSeen = {};
   headings.forEach((h) => {
     let s = slugify(h.textContent);
@@ -1146,7 +1182,7 @@ async function openPost(id) {
     <p class="post-meta-line"><span>${escapeHtml(post.date || "")}</span><span>·</span><span>${mins} ${t("journal.min_read")}</span><span>·</span><span>${headings.length} ${t(headings.length===1?"journal.section":"journal.sections")}</span></p>
     ${tmp.innerHTML}
   `;
-  const liveHeadings = [...view.querySelectorAll("h2, h3")];
+  const liveHeadings = [...view.querySelectorAll("h2:not(.post-title), h3")];
   buildPostRail(view, liveHeadings);
   gsap.from(view.children, { y: 10, autoAlpha: 0, duration: 0.4, stagger: 0.03, ease: "expo.out" });
   if (window.__isOwner) {
@@ -1353,9 +1389,17 @@ function savePost() {
    CONTACT
    ==================================== */
 function initContact() {
-  gsap.from("#page-contact .contact-card", {
-    scrollTrigger: { trigger: "#page-contact .contact-grid", start: "top 85%" },
-    y: 30, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: "expo.out",
+  // This used to animate `.contact-card` inside `.contact-grid`. The page was
+  // rebuilt as a hero plus a definition list, so neither selector existed any
+  // more: the page got no entrance animation and GSAP logged two warnings on
+  // every visit. Animate what is actually there.
+  gsap.from("#page-contact .contact-hero", {
+    scrollTrigger: { trigger: "#page-contact .contact-hero", start: "top 90%" },
+    y: 24, autoAlpha: 0, duration: 0.6, ease: "expo.out",
+  });
+  gsap.from("#page-contact .contact-list .row", {
+    scrollTrigger: { trigger: "#page-contact .contact-list", start: "top 88%" },
+    y: 18, autoAlpha: 0, duration: 0.5, stagger: 0.06, ease: "expo.out",
   });
 }
 
@@ -1521,6 +1565,7 @@ idle(() => prefetchForOffline(), { timeout: 4000 });
   refreshLabel();
   window.addEventListener("i18n:change", () => {
     refreshLabel();
+    setPageTitle(currentRoute());
     document.querySelectorAll(".mobile-lang [data-lang]").forEach((el) => {
       el.classList.toggle("active", el.getAttribute("data-lang") === getLang());
     });

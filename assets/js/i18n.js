@@ -9,6 +9,11 @@
 const DICTS = {
   en: {
     "skip":                 "Skip to content",
+    "meta.title.home":      "Mohamed Attia — Software Engineer",
+    "meta.title.work":      "Work — Mohamed Attia",
+    "meta.title.journal":   "Journal — Mohamed Attia",
+    "meta.title.contact":   "Contact — Mohamed Attia",
+    "meta.title.notfound":  "Page not found — Mohamed Attia",
     "nav.home":             "Home",
     "nav.work":             "Work",
     "nav.journal":          "Journal",
@@ -166,6 +171,11 @@ const DICTS = {
 
   tr: {
     "skip":                 "İçeriğe geç",
+    "meta.title.home":      "Mohamed Attia — Yazılım Mühendisi",
+    "meta.title.work":      "Projeler — Mohamed Attia",
+    "meta.title.journal":   "Günlük — Mohamed Attia",
+    "meta.title.contact":   "İletişim — Mohamed Attia",
+    "meta.title.notfound":  "Sayfa bulunamadı — Mohamed Attia",
     "nav.home":             "Ana sayfa",
     "nav.work":             "Çalışmalar",
     "nav.journal":          "Günlük",
@@ -323,6 +333,11 @@ const DICTS = {
 
   ar: {
     "skip":                 "تخطَّ إلى المحتوى",
+    "meta.title.home":      "محمد عطية — مهندس برمجيات",
+    "meta.title.work":      "الأعمال — محمد عطية",
+    "meta.title.journal":   "المدونة — محمد عطية",
+    "meta.title.contact":   "التواصل — محمد عطية",
+    "meta.title.notfound":  "الصفحة غير موجودة — محمد عطية",
     "nav.home":             "الرئيسية",
     "nav.work":             "الأعمال",
     "nav.journal":          "المدوّنة",
