@@ -135,6 +135,10 @@ document.addEventListener("click", (e) => {
       if (next) localStorage.setItem("pf:owner", "1");
       else      localStorage.removeItem("pf:owner");
       window.__isOwner = next;
+      // bindJournalToolbar() returns early when not owner but still marks
+      // itself bound, so without this reset the editor buttons stay dead after
+      // toggling owner mode this way. setOwner() already does the same.
+      bindJournalToolbar.bound = false;
       toast(next ? "Owner mode: ON" : "Owner mode: OFF");
       buf = "";
       // re-render journal if visible
@@ -517,6 +521,10 @@ async function initWork() {
   const grid = $("#grid");
   const filters = $("#page-work .work-filters");
   const preview = $("#preview");
+  // initWork re-runs on a language change and on the retry button, so drop the
+  // pager built by the previous run. Its click handler closes over that run's
+  // `page` variable, and leaving it attached made one click paginate twice.
+  $("#pager")?.remove();
   try {
     let repos;
     const CACHE_KEY = "pf:repos:v7";
@@ -640,6 +648,17 @@ async function initWork() {
         // append OUTSIDE work-layout so it doesn't steal the preview column
         const layout = $(".work-layout");
         layout.parentNode.insertBefore(pager, layout.nextSibling);
+        // Bound to the pager itself, not to document, so exactly one handler
+        // exists per pager and it dies with the element.
+        pager.addEventListener("click", (e) => {
+          const b = e.target.closest(".page-btn"); if (!b || b.disabled) return;
+          const total = Math.max(1, Math.ceil(filteredRepos().length / PER_PAGE));
+          if (b.dataset.page === "prev") page = Math.max(1, page - 1);
+          else if (b.dataset.page === "next") page = Math.min(total, page + 1);
+          else page = +b.dataset.page;
+          renderCards();
+          lenis.scrollTo($("#page-work").offsetTop, { duration: 0.5 });
+        });
       }
       const total = Math.max(1, Math.ceil(filteredRepos().length / PER_PAGE));
       if (total <= 1) { pager.innerHTML = ""; return; }
@@ -686,9 +705,12 @@ async function initWork() {
       $("#preview-updated").textContent = relTime(r.pushed_at);
       $("#preview-topics").innerHTML = (r.topics || []).slice(0, 6).map((t) => `<span class="topic">#${escapeHtml(t)}</span>`).join("");
       const sourceA = $("#preview-source");
+      // The `else` here has to belong to the html_url check. When it was
+      // attached to the visit-label check below, a private repo (html_url
+      // null) kept the previous repo's Source link visible and clickable.
       if (r.html_url) { sourceA.href = r.html_url; sourceA.hidden = false; sourceA.textContent = t("work.source"); }
-      const visitA = $("#preview-visit"); if (visitA) visitA.textContent = t("work.visit");
       else { sourceA.hidden = true; }
+      const visitA = $("#preview-visit"); if (visitA) visitA.textContent = t("work.visit");
       const visit = $("#preview-visit"); const live = liveURL(r);
       if (live) { visit.href = live; visit.hidden = false; } else visit.hidden = true;
 
@@ -794,15 +816,6 @@ async function initWork() {
       });
     }
 
-    document.addEventListener("click", (e) => {
-      const b = e.target.closest(".page-btn"); if (!b || b.disabled) return;
-      const total = Math.max(1, Math.ceil(filteredRepos().length / PER_PAGE));
-      if (b.dataset.page === "prev") page = Math.max(1, page - 1);
-      else if (b.dataset.page === "next") page = Math.min(total, page + 1);
-      else page = +b.dataset.page;
-      renderCards();
-      lenis.scrollTo($("#page-work").offsetTop, { duration: 0.5 });
-    });
   } catch (e) {
     console.warn(e);
     grid.innerHTML = `<p class="muted">${t("work.load_failed")} <button class="linkish" id="work-retry" style="margin:0 .4rem">${t("work.retry")}</button> · <a class="ulink" href="https://github.com/${GH_USER}" target="_blank" rel="noopener">${t("work.view_github")}</a></p>`;
@@ -813,74 +826,20 @@ async function initWork() {
 
 /* ====================================
    JOURNAL — all posts editable + deletable
-   Storage: pf:posts:v1 = full array.
-   On first load (key absent), seed with defaults.
+   Storage: LS_KEY holds the owner's own drafts, written in the browser.
+   Auto-published posts come from assets/data/journal.json and are merged in
+   by loadPosts(); a draft with the same id wins over the published one.
    ==================================== */
-const LS_KEY = "pf:posts:v2";
+// Bumped to v3 when the old seeded sample posts were removed. The bump is the
+// point: without it, anyone who already visited keeps the old array forever,
+// because loadPosts() only seeds when the key is absent.
+const LS_KEY = "pf:posts:v3";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-const DEFAULT_POSTS = [
-  {
-    id: "_d_hello",
-    title: "Hello, world",
-    date: "2026-06-22",
-    body: `# Hello, world\n\nI'm **Mohamed Attia**, software engineering student at AYBU. This is where I drop build logs, notes, and write-ups for projects on the Work page.\n\n## What lives here\n\n- Short technical notes from things I'm learning\n- Deep-dives on projects I ship\n- Strong opinions about tooling, loosely held\n\nReach me via the **Contact** page.\n`,
-  },
-  {
-    id: "_d_portfolio",
-    title: "How I built this portfolio",
-    date: "2026-06-20",
-    body: `# How I built this portfolio\n\n## Constraints\n\n1. **Zero build step.** Pure HTML/CSS/ES modules. GitHub Pages.\n2. **No framework.** GSAP + Lenis + marked from CDN via importmap.\n3. **Hash router.** Four pages, in-app transitions.\n4. **Local journal CRUD** in \`localStorage\`. Owner-mode unlocks editor (type \`imowner\`).\n\n## Stack\n\n| Layer  | Tool              |\n| ------ | ----------------- |\n| Build  | None              |\n| Anim   | GSAP + ScrollTrigger |\n| Scroll | Lenis             |\n| MD     | marked            |\n| Icons  | simpleicons CDN   |\n\n## What surprised me\n\n- Vanilla feels fast because *nothing else is happening*.\n- GitHub social cards (\`opengraph.githubassets.com/1/owner/repo\`) make instant project previews.\n- thum.io renders live-site screenshots for free, no API key.\n`,
-  },
-  {
-    id: "_d_dotfiles",
-    title: "Why I wrote my own dotfiles installer",
-    date: "2026-06-15",
-    body: `# Why I wrote my own dotfiles installer\n\nEvery existing tool wanted me to learn its DSL. \`chezmoi\` has templates. \`yadm\` has hooks. \`stow\` punts on secrets. I just wanted: *new laptop → one command → my exact setup*.\n\n## What I shipped\n\n\`\`\`bash\ncurl -fsSL dot.attia.dev | bash\n\`\`\`\n\n- Detects OS (Arch / Debian / macOS)\n- Symlinks configs from a single tree\n- Idempotent — re-run any time\n\n## What I learned\n\n- POSIX shell + \`set -euo pipefail\` covers 95% of cases\n- \`hyperfine\` proved my install runs in ~9s on a clean Arch VM\n- Writing the README first kept the surface small\n\nRepo: \`Newdotfile-\` on GitHub.\n`,
-  },
-  {
-    id: "_d_autoclaude",
-    title: "Auto-clicking the Claude CLI to skip permission prompts",
-    date: "2026-06-10",
-    body: `# Auto-clicking the Claude CLI to skip permission prompts\n\nClaude Code asks before every tool call. Great for safety, painful when you're running a 40-step plan and want to walk away.\n\n## Approach\n\nWrap the Claude CLI in a pty. Watch stdout for the \`╭ Allow this command?\` prompt regex. Send \`<enter>\` if the proposed command matches an allowlist.\n\n\`\`\`ts\nconst ALLOW = [/^git (status|diff|log)/, /^ls/, /^cat /];\npty.onData((d) => {\n  if (/Allow this command/.test(d) && ALLOW.some((r) => r.test(lastCmd))) {\n    pty.write("\\r");\n  }\n});\n\`\`\`\n\n## What went wrong\n\n- First version sent enter to EVERY prompt → almost ran \`rm -rf\`. Allowlist is the only safe design.\n- ANSI escape codes break naive regex. Strip with \`strip-ansi\` first.\n\nRepo: \`auto-claude\`. Use at your own risk.\n`,
-  },
-  {
-    id: "_d_excalivault",
-    title: "Excalidraw as a study system",
-    date: "2026-06-05",
-    body: `# Excalidraw as a study system\n\nI tried Obsidian, Notion, Anki. None survived the semester. What stuck: **draw the concept first, write the words second.**\n\n## Setup\n\n- One \`.excalidraw\` file per topic\n- Library of stencils (arrows, brackets, code-block frames)\n- Git LFS for binary diff\n\n## Why it works\n\n- Drawing forces understanding before vocabulary\n- Visual recall > textual recall for system diagrams\n- Re-drawing tomorrow's revision is faster than re-reading notes\n\nRepo: \`excalidraw-vault\`.\n`,
-  },
-  {
-    id: "_d_til-og",
-    title: "TIL: GitHub social cards are a hidden API",
-    date: "2026-06-02",
-    body: `# TIL: GitHub social cards are a hidden API\n\n\`\`\`\nhttps://opengraph.githubassets.com/1/<owner>/<repo>\n\`\`\`\n\nReturns the auto-generated PNG GitHub uses for link previews. The \`1\` is a cache buster — change it to invalidate.\n\nUseful for:\n\n- Project list pages (no need to manually screenshot)\n- README header images\n- Quick visual repo previews in dashboards\n\nUndocumented. Use sparingly.\n`,
-  },
-  {
-    id: "_d_lenis",
-    title: "Lenis vs native scroll: when smooth scroll hurts",
-    date: "2026-05-28",
-    body: `# Lenis vs native scroll: when smooth scroll hurts\n\nLenis is gorgeous on a landing page. Painful in three places:\n\n1. **Nested scroll areas.** Lenis hijacks wheel events for the whole page. Use \`data-lenis-prevent\` on inner-scroll containers.\n2. **Anchor jumps.** Browser \`scrollIntoView\` no longer instant — has to go through Lenis' easing.\n3. **Accessibility.** Users with \`prefers-reduced-motion\` need it disabled. Pass \`smoothWheel: !reduceMotion\`.\n\n## My current defaults\n\n\`\`\`js\nnew Lenis({\n  duration: 0.6,\n  lerp: 0.22,\n  wheelMultiplier: 1.5,\n  easing: (t) => 1 - Math.pow(1 - t, 3),\n});\n\`\`\`\n\nLower duration + higher lerp = snappy. The defaults feel laggy on a fast trackpad.\n`,
-  },
-  {
-    id: "_d_go-students",
-    title: "Go for student projects: one-week verdict",
-    date: "2026-05-20",
-    body: `# Go for student projects: one-week verdict\n\nSpent a week rewriting a Python script in Go to learn it for real.\n\n## Wins\n\n- **Single binary.** Sharing a tool with a classmate is \`scp\` not \`pip install -r\`.\n- **Errors as values** is annoying for two days, then liberating.\n- \`go test ./...\` is genuinely fast.\n\n## Misses\n\n- No generics ergonomics yet. Even with 1.18+, type constraints fight you.\n- Module system trips beginners. \`go.mod\` + replace directives = lost afternoon.\n\n## When I'd reach for it\n\n- CLIs I want to ship to other people\n- Long-running services with low ceremony\n- Anything I want compiled, fast, and boring\n\nNot Go: data analysis, prototypes, throwaway scripts. Python still wins those.\n`,
-  },
-  {
-    id: "_d_bug-gsap",
-    title: "Bug hunt: why my GSAP timeline ran twice",
-    date: "2026-05-12",
-    body: `# Bug hunt: why my GSAP timeline ran twice\n\n## Symptom\n\nHero text split, then animated. Then animated *again* 800ms later, from the wrong starting state.\n\n## What I checked first (wrong)\n\n- React strict mode (not React)\n- Double script tag (only one)\n- Event listener double-binding (none)\n\n## Actual cause\n\nMy hash router called \`initHome()\` on every route change, not just the first visit. \`splitChars()\` was wrapping already-split spans into more spans. The timeline ran each time.\n\n## Fix\n\n\`\`\`js\nconst inited = {};\nfunction runPageInit(route) {\n  if (route === "/" && !inited.home) { initHome(); inited.home = true; }\n}\n\`\`\`\n\n## Lesson\n\nIdempotent init functions or memoized init flags. Pick one. I picked the flag.\n`,
-  },
-  {
-    id: "_d_summer-2026",
-    title: "What I'm building in summer 2026",
-    date: "2026-05-01",
-    body: `# What I'm building in summer 2026\n\nThree open projects, all student-budget:\n\n## 1. dcli-pkgs\nPackage manager for shell tools written as single Go binaries. Auto-detects shell, drops aliases, supports \`update\` and \`pin\`.\n\n## 2. IntentTube v2\nYouTube wrapper that asks *why* you opened it before showing the feed. Logs the intent vs. what you actually watched. Self-shaming as a service.\n\n## 3. AYBU SE Student Guide\nUnofficial single-page guide for new AYBU SE students. Curriculum map, internship rules, professor cheat-sheet. Already used by ~80 first-years last semester.\n\n## What I want feedback on\n\n- IntentTube's intent capture — too friction-y? Too soft?\n- dcli-pkgs vs Homebrew taps for simple tools — am I reinventing?\n\nEmail or X if you've tried similar.\n`,
-  },
-];
+// No seeded posts. The journal is the Terminal-101 series, published from
+// posts/queue/ by scripts/publish-post.mjs into assets/data/journal.json.
+// Owner-written drafts still live in localStorage under LS_KEY.
+const DEFAULT_POSTS = [];
 
 const TEMPLATES = {
   blank: ``,
@@ -1486,7 +1445,9 @@ async function prefetchForOffline() {
     } catch { return Promise.resolve(); }
   };
   try {
-    const r = await fetch("/assets/data/journal.json");
+    // Relative, to match fetchAutoPosts() and keep working if the site is ever
+    // served from a subpath.
+    const r = await fetch("./assets/data/journal.json");
     if (r.ok) {
       const idx = await r.json();
       idx.forEach((p) => p.bodyUrl && quiet(p.bodyUrl));

@@ -100,7 +100,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — Journal",
     "journal.h1":           "Notes &amp; build <em>logs.</em>",
-    "journal.lede":         "Drafts saved in your browser. Click <strong>New post</strong> to add one. Pick a template, write markdown, add images.",
+    "journal.lede":         "Notes from the things I am learning, written while I learn them. Right now: one post every 4 days from <strong>Terminal 101</strong>, my course for people new to the terminal.",
     "journal.new":          "New post",
     "journal.info_prefix":  "Stored locally · ",
     "journal.export":       "Export",
@@ -255,7 +255,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — Günlük",
     "journal.h1":           "Notlar ve <em>yapım logları.</em>",
-    "journal.lede":         "Taslaklar tarayıcında saklanır. <strong>Yeni gönderi</strong>'ye tıklayıp ekle. Şablon seç, markdown yaz, resim ekle.",
+    "journal.lede":         "Öğrendiğim şeylerden notlar, öğrenirken yazıldı. Şu anda: <strong>Terminal 101</strong>'den 4 günde bir yeni yazı, terminale yeni başlayanlar için hazırladığım kurs.",
     "journal.new":          "Yeni gönderi",
     "journal.info_prefix":  "Yerel olarak saklanır · ",
     "journal.export":       "Dışa aktar",
@@ -410,7 +410,7 @@ const DICTS = {
 
     "journal.kicker":       "03 — المدوّنة",
     "journal.h1":           "ملاحظات و<em>سجلات بناء.</em>",
-    "journal.lede":         "تُحفظ المسودات في متصفحك. اضغط <strong>منشور جديد</strong> للإضافة. اختر قالباً، اكتب بـ markdown، أضف صوراً.",
+    "journal.lede":         "ملاحظات عن الأشياء التي أتعلمها، مكتوبة أثناء تعلمي لها. حالياً: منشور كل 4 أيام من <strong>Terminal 101</strong>، دورتي للمبتدئين في الطرفية.",
     "journal.new":          "منشور جديد",
     "journal.info_prefix":  "مخزّن محلياً · ",
     "journal.export":       "تصدير",

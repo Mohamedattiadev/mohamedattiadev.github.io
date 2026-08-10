@@ -9,7 +9,7 @@ Live: https://mohamedattiadev.github.io
 - **SPA router** — four pages (`/`, `/work`, `/journal`, `/contact`) + `/404`, hash-free URLs via History API with a GitHub Pages 404-redirect bounce.
 - **i18n** — EN / TR / AR with full RTL flip. Persisted in `localStorage`, auto-detected from `navigator.language` on first visit. Topbar dropdown (desktop) + button row (mobile).
 - **Live work grid** — repos pulled from GitHub REST API, cached 1h in `localStorage`, retry-on-failure, hover preview with README, stars/forks/issues, license, live-demo detection.
-- **Journal** — markdown posts from `assets/data/journal.json`, in-browser CRUD for the owner, draft templates, table-of-contents rail, scroll-spy.
+- **Journal** — markdown posts from `assets/data/journal.json`, auto-published from a queue one post every 4 days, in-browser CRUD for the owner, draft templates, table-of-contents rail, scroll-spy.
 - **Offline-ready** — Service Worker precaches the shell + fonts, stale-while-revalidate for data, offline fallback page.
 - **Smooth scroll** — Lenis + GSAP ScrollTrigger.
 - **Owner mode** — `?owner=1` or sign-in dialog (SHA-256-hashed password gates the journal editor UI; data lives entirely in the visitor's own `localStorage`).
@@ -30,13 +30,29 @@ Push to `main` — GitHub Actions (`.github/workflows/pages.yml`) builds the sta
 
 ## Add a journal post
 
-```sh
-node scripts/publish-post.mjs path/to/post.md
+Drop a markdown file into `posts/queue/`, with front matter:
+
+```markdown
+---
+title: the post title
+slug: a-unique-slug
+---
+
+# the post title
+
+body...
 ```
 
-This appends the post to `assets/data/journal.json` and copies the markdown into `posts/`.
+`.github/workflows/journal-publish.yml` runs hourly and publishes **one post every 4 days**, taking the queue in filename order (`01-…` first). So prefix the files when the order matters, as the Terminal-101 series does. The hour of day is a hash of the slug, so posts do not all land at 00:00 UTC.
 
-Or in the browser as owner: `/journal` → **New post** → pick a template → write markdown → save. Use **Export** to dump a JSON backup.
+```sh
+node scripts/publish-post.mjs --dry-run   # what would go out next
+node scripts/publish-post.mjs --force     # publish now, ignore the interval
+```
+
+Publishing appends the post to `assets/data/journal.json` and records the slug plus the date in `posts/published.json`. A slug listed there never publishes twice.
+
+Or in the browser as owner: `/journal` → **New post** → pick a template → write markdown → save. Those drafts live only in your own `localStorage`. Use **Export** to dump a JSON backup.
 
 ## i18n
 
