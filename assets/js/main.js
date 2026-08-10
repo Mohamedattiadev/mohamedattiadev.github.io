@@ -434,7 +434,12 @@ function initHome() {
    ==================================== */
 /* Manual overrides for live demos (use when homepage points wrong place).
    Key = repo name. Value = full https URL. */
-const LIVE_DEMOS = {};
+const LIVE_DEMOS = {
+  // dev-101 has Pages on, so the guessed root URL was shown as the live demo,
+  // but the repo has no index.html at its root and that URL 404s. The course
+  // player is the real page worth linking.
+  "dev-101": "https://mohamedattiadev.github.io/dev-101/Terminal-101/watch.html",
+};
 
 /* Hide these repos from the Work page (case-sensitive match on repo name) */
 const HIDE_REPOS = new Set([
@@ -444,6 +449,12 @@ const HIDE_REPOS = new Set([
   "Mohamedattiadev",
   "HM-1-2-",
   "excalidraw",
+  // These two are forks of the group projects already listed in
+  // PINNED_PROJECTS below, so without hiding them each project got two cards:
+  // the pinned one with a real title and description, and a bare fork card
+  // with neither.
+  "University-Database-Management-System-Project-",
+  "Design-And-Analysis-Of-Algorithms-Project-SENG303",
 ]);
 
 /* Manual extras to PREPEND to the Work grid. Use for repos not on GitHub
@@ -490,11 +501,16 @@ const PINNED_PROJECTS = [
 
 function liveURL(r) {
   if (LIVE_DEMOS[r.name]) return LIVE_DEMOS[r.name];
-  // GitHub Pages enabled on this repo → predictable URL
+  // GitHub Pages enabled on this repo → predictable URL.
+  // Still trusted on a fork, because Pages there is something you turned on
+  // and deployed yourself.
   if (r.has_pages) {
     const user = (r.owner?.login || GH_USER).toLowerCase();
     return `https://${user}.github.io/${r.name}/`;
   }
+  // A fork inherits the upstream project's homepage, which is not your work.
+  // The n8n fork was advertising a "Visit" button pointing at n8n.io.
+  if (r.fork) return null;
   // Explicit homepage on repo, with strict filter
   if (!r.homepage || !/^https?:\/\//.test(r.homepage)) return null;
   const blocked = /(^https?:\/\/(www\.)?(github\.com|youtube\.com|youtu\.be|twitter\.com|x\.com|linkedin\.com))/i;
@@ -610,7 +626,10 @@ async function initWork() {
       card.innerHTML = `
         <div class="top">
           <span class="idx">/ ${String(i + 1).padStart(2, "0")}</span>
-          ${r.language ? `<span class="lang">${escapeHtml(r.language)}</span>` : ``}
+          <span class="badges">
+            ${r.fork ? `<span class="lang fork" title="${escapeAttr(t("work.card.fork_t"))}">${t("work.card.fork")}</span>` : ``}
+            ${r.language ? `<span class="lang">${escapeHtml(r.language)}</span>` : ``}
+          </span>
         </div>
         <h3>${escapeHtml(r.name)}</h3>
         ${r.description ? `<p class="desc">${escapeHtml(r.description)}</p>` : `<p class="desc muted">${t("work.card.no_desc")}</p>`}
@@ -696,6 +715,12 @@ async function initWork() {
       const langEl = $("#preview-lang");
       if (r.language) { langEl.textContent = r.language; langEl.style.display = ""; }
       else langEl.style.display = "none";
+      const forkEl = $("#preview-fork");
+      if (forkEl) {
+        forkEl.textContent = t("work.card.fork");
+        forkEl.title = t("work.card.fork_t");
+        forkEl.hidden = !r.fork;
+      }
       $("#preview-desc").textContent = r.description || t("work.preview.no_desc");
       $("#preview-stars").textContent  = r.stargazers_count ?? 0;
       $("#preview-forks").textContent  = r.forks_count ?? 0;
