@@ -157,9 +157,11 @@ html[dir="rtl"]{}
 html[dir="rtl"] body{font-family:var(--mono)}
 /* Keep the top bar in LTR order under AR: brand left, menu button right */
 html[dir="rtl"] .topbar{direction:ltr}
-/* Section rail: dashes are left-anchored and grow rightward (transform-origin:left),
-   so keep it LTR under AR or they hug the wrong edge of the pill */
-html[dir="rtl"] .post-rail{direction:ltr}
+/* Section rail: mirror it to the left under AR — the page text is right-aligned
+   there, so a right-pinned rail sits on top of the headings and lede.
+   Keep the rail's own direction LTR: the dashes are left-anchored and grow
+   rightward (transform-origin:left), so RTL would hug the wrong edge. */
+html[dir="rtl"] .post-rail{direction:ltr;right:auto;left:14px}
 html[dir="rtl"] .topbar .navlink,
 html[dir="rtl"] .topbar .brand,
 html[dir="rtl"] .topbar .btn.pill{unicode-bidi:plaintext}

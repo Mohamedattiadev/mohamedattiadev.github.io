@@ -1078,7 +1078,12 @@ function buildPostRail(view, headings) {
       tip.setAttribute("aria-hidden", "false");
       const r = b.getBoundingClientRect();
       tip.style.top = `${Math.round(r.top + r.height / 2 - tip.offsetHeight / 2)}px`;
-      tip.style.left = `${Math.round(r.left - tip.offsetWidth - 10)}px`;
+      // The rail sits on the left under RTL, so the tooltip has to open rightward
+      // or it lands off-screen.
+      const rtl = document.documentElement.getAttribute("dir") === "rtl";
+      tip.style.left = rtl
+        ? `${Math.round(r.right + 10)}px`
+        : `${Math.round(r.left - tip.offsetWidth - 10)}px`;
     });
     b.addEventListener("pointerleave", () => tip.setAttribute("aria-hidden", "true"));
   });
