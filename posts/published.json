@@ -1,7 +1,8 @@
 {
   "_comment": "Tracks which queue files have been published and when the last one went out. Maintained by scripts/publish-post.mjs.",
-  "last": "2026-08-10",
+  "last": "2026-08-14",
   "slugs": [
-    "terminal-101-01-command-line-basics"
+    "terminal-101-01-command-line-basics",
+    "terminal-101-02-the-linux-file-system"
   ]
 }

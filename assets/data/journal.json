@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_terminal-101-02-the-linux-file-system_2026-08-14",
+    "title": "terminal 101, chapter 2, there is only one tree",
+    "date": "2026-08-14",
+    "body": "# terminal 101, chapter 2, there is only one tree\n\nchapter 2 is about the folders u see when u run `ls /` and then panic a little.\n\n## windows habits first\n\nin windows u have `C:` and `D:` and every disk gets its own letter.\n\nlinux does not work like that. there is **one** tree, it starts at `/`, and everything is somewhere inside it. ur usb stick, ur second hard disk, all of it. that is the whole idea and everything else in this chapter follows from it.\n\n## u only care about 5 of them\n\n| folder | what is in it |\n|---|---|\n| `/home/ati` | my files. this is where i work. same as `~` |\n| `/etc` | settings, all of them plain text |\n| `/var/log` | logs, where u look when something breaks |\n| `/tmp` | scratch space, emptied when u restart |\n| `/usr/bin` | the commands themselves, as real files |\n\nthat last row is worth stopping on:\n\n```bash\nwhich grep\n```\n\n```\n/usr/bin/grep\n```\n\nso `grep` is not magic. it is a small program sitting in a folder on ur disk, exactly like ur notes.md is. every command u learn in this course is a file.\n\n## the rest\n\nu should recognize them so they stop looking scary, and that is all. `/boot` starts the machine, `/lib` is shared code, `/dev` is every device shown as a file, `/proc` is not even on ur disk, the kernel makes it up while u read it.\n\nand `/root` is not `/`. that one catches everyone once, including me.\n\n> `/` is the top of the whole tree. `/root` is just one user's home folder.\n\n[read chapter 2](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/02-the-linux-file-system)",
+    "source": "auto"
+  },
+  {
     "id": "auto_terminal-101-01-command-line-basics_2026-08-10",
     "title": "terminal 101, chapter 1, echo and the two kinds of quotes",
     "date": "2026-08-10",
