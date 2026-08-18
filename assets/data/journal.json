@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_terminal-101-03-files-and-navigation_2026-08-18",
+    "title": "terminal 101, chapter 3, the star is not part of ls",
+    "date": "2026-08-18",
+    "body": "# terminal 101, chapter 3, the star is not part of ls\n\nchapter 3 is the longest one, because it is the chapter u actually use every day. move around, make things, copy them, delete them, read them.\n\n## the commands themselves\n\n`cd` to move, `pwd` to see where u are standing, `ls` to see what is here. `mkdir` makes a folder, `touch` makes a file, `cp` copies, `mv` moves, `rm` deletes.\n\n`cat` prints a file, `less` opens it so u can scroll, `head` and `tail` give u the first or last 10 lines.\n\nthat is the list. nothing clever in it.\n\n- careful: `rm -rf` never asks u and there is no trash bin. run `pwd` and `ls` first, every time.\n\n## now the actual lesson\n\nthe `*` wildcard. `ls *.txt` lists the txt files, `cp *.txt backup/` copies them all.\n\nand here is the thing that confuses everyone including me:\n\n> the `*` is not a feature of `ls` or `cp` or `rm`. it is the shell.\n\nbefore `ls` even starts, the shell finds the files that match and replaces `*.txt` with their names. so `ls` never sees a star at all.\n\nu do not have to believe me:\n\n```bash\necho *.txt\n```\n\n```\nnotes.txt old.txt\n```\n\n`echo` has nothing to do with files. it printed file names because the shell had already swapped the star out before `echo` ran.\n\nonce u see that once, u never forget it. and it is also why `rm *` is so dangerous, u are not asking `rm` to be clever, the shell hands it every name in the folder and `rm` obeys.\n\n> put `ls` in front first, read what u are about to hit, then change it to `rm`.\n\n[read chapter 3](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/03-files-and-navigation)",
+    "source": "auto"
+  },
+  {
     "id": "auto_terminal-101-02-the-linux-file-system_2026-08-14",
     "title": "terminal 101, chapter 2, there is only one tree",
     "date": "2026-08-14",
