@@ -487,6 +487,18 @@ const HIDE_REPOS = new Set([
    so the same render code works. */
 const PINNED_PROJECTS = [
   {
+    name: "Finential",
+    full_name: `${GH_USER}/finential`,
+    description: "Personal finance app you talk to instead of type into — log expenses in natural language, scan receipts, or use voice. Multi-currency, offline-first, optional AI key. Private repo — live demo only.",
+    html_url: null, homepage: "https://finential.vercel.app", has_pages: false,
+    private: true,
+    language: "TypeScript",
+    stargazers_count: 0, forks_count: 0, open_issues_count: 0,
+    pushed_at: "2026-08-15T00:00:00Z",
+    topics: ["nextjs", "vercel", "fintech", "ai", "private"],
+    owner: { login: GH_USER, avatar_url: `https://github.com/${GH_USER}.png` },
+  },
+  {
     name: "University DBMS",
     full_name: "Kerim123-k/University-Database-Management-System-Project-",
     description: "Group project — full SQL-based university DBMS: students, courses, grades, enrollment. SENG class.",
