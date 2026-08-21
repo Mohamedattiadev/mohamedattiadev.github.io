@@ -208,11 +208,17 @@ html[dir="rtl"] .ch-meta{unicode-bidi:plaintext}
 /* (journal-search direction handled above for RTL) */
 html[dir="rtl"] #page-journal,
 html[dir="rtl"] .journal-toolbar,
-html[dir="rtl"] .journal-layout,
 html[dir="rtl"] .journal-aside{direction:ltr;text-align:left}
 /* But keep the journal page-head (translated title + lede) RTL */
 html[dir="rtl"] #page-journal > .page-head{direction:rtl;text-align:right}
 html[dir="rtl"] #page-journal > .page-head .page-lede{unicode-bidi:plaintext}
+/* The aside (search + post tree) is a grid track, not just text: it inherited
+   ltr from #page-journal above, which pinned it to the grid's first (left)
+   track in every language. Flip the grid itself back to rtl so the track
+   order mirrors under AR and the aside lands on the right, matching the
+   page. .journal-aside keeps its own forced-ltr text alignment regardless,
+   since that's set directly on it, not inherited from this grid. */
+html[dir="rtl"] .journal-layout{direction:rtl}
 
 /* ===== Page system ===== */
 .page{display:none;min-height:60vh;padding-top:80px}
