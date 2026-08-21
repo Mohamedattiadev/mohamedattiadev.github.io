@@ -176,7 +176,6 @@ html[dir="rtl"] .hero-cta{direction:rtl}
 /* Keep English-only content visually LTR under RTL chrome */
 html[dir="rtl"] .stack-marquee,
 html[dir="rtl"] .stack-track,
-html[dir="rtl"] .work-filters,
 html[dir="rtl"] .grid,
 html[dir="rtl"] .card,
 html[dir="rtl"] .work-aside,
@@ -184,8 +183,13 @@ html[dir="rtl"] .preview,
 html[dir="rtl"] .preview-body,
 html[dir="rtl"] .journal-list,
 html[dir="rtl"] .journal-view{direction:ltr;text-align:left}
-/* Search inputs: keep RTL so Arabic placeholder/typing aligns right (flex parent auto-swaps icon to right) */
+/* Search inputs: keep RTL so Arabic placeholder/typing aligns right (flex parent auto-swaps icon to right).
+   Filter chips (language names, English) join them: the row is a flex-wrap packed to flex-start, and under
+   the old forced-ltr rule that meant flush against the left edge — stranded under an otherwise right-aligned
+   RTL page. RTL direction packs the row to the right instead; the chip labels themselves are plain Latin text
+   so the glyphs don't mirror, only the packing edge and chip order do. */
 html[dir="rtl"] .work-search,
+html[dir="rtl"] .work-filters,
 html[dir="rtl"] .journal-search{direction:rtl}
 html[dir="rtl"] .work-search input,
 html[dir="rtl"] .journal-search input{direction:rtl;text-align:right}

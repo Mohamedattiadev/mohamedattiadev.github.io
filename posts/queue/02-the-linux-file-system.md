@@ -5,41 +5,33 @@ slug: terminal-101-02-the-linux-file-system
 
 # terminal 101, chapter 2, there is only one tree
 
-chapter 2 is about the folders u see when u run `ls /` and then panic a little.
+chapter 2 is about the folders i see the moment i run `ls /` and panic a little. i still remember doing that.
 
-## windows habits first
+## one tree, not a `C:` and a `D:`
 
-in windows u have `C:` and `D:` and every disk gets its own letter.
+in windows every disk gets its own letter, `C:`, `D:`, and so on.
 
-linux does not work like that. there is **one** tree, it starts at `/`, and everything is somewhere inside it. ur usb stick, ur second hard disk, all of it. that is the whole idea and everything else in this chapter follows from it.
+linux does not work like that. there is **one** tree, it starts at `/`, and everything is somewhere inside it, ur usb stick, ur second hard disk, all of it. that is the whole idea, and everything else in this chapter just follows from it.
 
-## u only care about 5 of them
+## the 5 i actually care about
 
 | folder | what is in it |
 |---|---|
 | `/home/ati` | my files. this is where i work. same as `~` |
 | `/etc` | settings, all of them plain text |
-| `/var/log` | logs, where u look when something breaks |
-| `/tmp` | scratch space, emptied when u restart |
+| `/var/log` | logs, where i look when something breaks |
+| `/tmp` | scratch space, emptied when i restart |
 | `/usr/bin` | the commands themselves, as real files |
 
-that last row is worth stopping on:
+that last row is worth stopping on. i run `which grep`, i get `/usr/bin/grep` back.
 
-```bash
-which grep
-```
-
-```
-/usr/bin/grep
-```
-
-so `grep` is not magic. it is a small program sitting in a folder on ur disk, exactly like ur notes.md is. every command u learn in this course is a file.
+so `grep` is not magic, it is a small program sitting in a folder on my disk, exactly like my notes.md is, and every command i learn in this course turns out to be a file too, sitting somewhere, waiting to be read like any other file.
 
 ## the rest
 
-u should recognize them so they stop looking scary, and that is all. `/boot` starts the machine, `/lib` is shared code, `/dev` is every device shown as a file, `/proc` is not even on ur disk, the kernel makes it up while u read it.
+i just need to recognize the rest so they stop looking scary, nothing more than that. `/boot` starts the machine. `/lib` is shared code. `/dev` is every device shown as a file. `/proc` is not even on my disk, the kernel makes it up while i am reading it.
 
-and `/root` is not `/`. that one catches everyone once, including me.
+and `/root` is not `/`. that one catches everyone once, it caught me too.
 
 > `/` is the top of the whole tree. `/root` is just one user's home folder.
 

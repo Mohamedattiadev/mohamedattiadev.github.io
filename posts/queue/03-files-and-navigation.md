@@ -5,29 +5,27 @@ slug: terminal-101-03-files-and-navigation
 
 # terminal 101, chapter 3, the star is not part of ls
 
-chapter 3 is the longest one, because it is the chapter u actually use every day. move around, make things, copy them, delete them, read them.
+chapter 3 is the longest one, because it is the chapter i actually use every day. move around, make things, copy them, delete them, read them.
 
-## the commands themselves
+## moving around and touching files
 
-`cd` to move, `pwd` to see where u are standing, `ls` to see what is here. `mkdir` makes a folder, `touch` makes a file, `cp` copies, `mv` moves, `rm` deletes.
+`cd` moves me, `pwd` tells me where i am standing, `ls` shows me what is here. `mkdir` makes a folder, `touch` makes a file, `cp` copies, `mv` moves, `rm` deletes.
 
-`cat` prints a file, `less` opens it so u can scroll, `head` and `tail` give u the first or last 10 lines.
+`cat` prints a file, `less` opens it so i can scroll, `head` and `tail` give me the first or last 10 lines. that is the whole list, nothing clever in it.
 
-that is the list. nothing clever in it.
+careful: `rm -rf` never asks u and there is no trash bin, so i run `pwd` and `ls` first, every time, before i touch it.
 
-- careful: `rm -rf` never asks u and there is no trash bin. run `pwd` and `ls` first, every time.
+## the wildcard
 
-## now the actual lesson
+now the actual lesson of the chapter, the `*` wildcard. `ls *.txt` lists the txt files, `cp *.txt backup/` copies all of them in one line instead of typing 20 names.
 
-the `*` wildcard. `ls *.txt` lists the txt files, `cp *.txt backup/` copies them all.
-
-and here is the thing that confuses everyone including me:
+and here is the part that confuses everyone, including me:
 
 > the `*` is not a feature of `ls` or `cp` or `rm`. it is the shell.
 
-before `ls` even starts, the shell finds the files that match and replaces `*.txt` with their names. so `ls` never sees a star at all.
+before `ls` even starts, the shell finds the files that match and swaps `*.txt` for their names, so `ls` never sees a star at all, it just gets a list of names as if i typed them by hand.
 
-u do not have to believe me:
+i did not believe it either, until i tried this:
 
 ```bash
 echo *.txt
@@ -37,10 +35,10 @@ echo *.txt
 notes.txt old.txt
 ```
 
-`echo` has nothing to do with files. it printed file names because the shell had already swapped the star out before `echo` ran.
+`echo` has nothing to do with files. it printed file names because the shell had already replaced the star before `echo` even ran.
 
-once u see that once, u never forget it. and it is also why `rm *` is so dangerous, u are not asking `rm` to be clever, the shell hands it every name in the folder and `rm` obeys.
+once u see that, u never forget it. and it is also why `rm *` is so dangerous, i am not asking `rm` to be clever, the shell hands it every name in the folder and `rm` obeys, all of them, no questions asked.
 
-> put `ls` in front first, read what u are about to hit, then change it to `rm`.
+> `ls` first, always. read what u are about to hit, then change it to `rm`.
 
 [read chapter 3](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/03-files-and-navigation)
