@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_terminal-101-04-search-grep-find_2026-08-22",
+    "title": "terminal 101, chapter 4, grep is the ctrl+f of the terminal",
+    "date": "2026-08-22",
+    "body": "# terminal 101, chapter 4, grep is the ctrl+f of the terminal\n\nchapter 4 is short. 2 commands, and they are easy to mix up.\n\n## grep, for text\n\nu already know what `grep` is, u just know it as `ctrl+f`. u are searching for something inside a file.\n\n```bash\ngrep \"Hello\" README.md\n```\n\nand the first surprise: it prints back **every line** that contains the word, not the word on its own. most people get that wrong the first time.\n\nthe flags u will actually use:\n\n- `-i` ignore uppercase and lowercase\n- `-v` invert it, show the lines that do **not** match\n- `-n` show the line number\n- `-r` search every file under here\n\n`-v` sounds useless until the first time u have to read a log file, then it is the one u reach for.\n\n## find, for files\n\n`grep` searches **inside** files. `find` searches **for** files. that is the whole difference.\n\n```bash\nfind . -name \"*.md\"\n```\n\nfirst argument is where to look, `-name` is what to look for. `-type f` gives u only files and `-type d` only folders.\n\n## why the quotes are there\n\n```bash\nfind . -name \"*.md\"     # right\nfind . -name *.md       # confusing error\n```\n\nand u already know why, because of chapter 3. without the quotes the shell eats the star before `find` ever sees it.\n\n> so the quotes are not decoration. they are u telling the shell to keep its hands off and let `find` do the matching itself.\n\n[read chapter 4](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/04-search-grep-find)",
+    "source": "auto"
+  },
+  {
     "id": "auto_terminal-101-03-files-and-navigation_2026-08-18",
     "title": "terminal 101, chapter 3, the star is not part of ls",
     "date": "2026-08-18",
