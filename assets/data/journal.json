@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_terminal-101-07-scripts-env-path_2026-09-04",
+    "title": "terminal 101, chapter 7, why u have to write ./hello.sh",
+    "date": "2026-09-04",
+    "body": "# terminal 101, chapter 7, why u have to write ./hello.sh\n\nchapter 7 is `export`, the `.bashrc` file, aliases, and the `PATH`. it is also where a question from chapter 5 finally gets answered.\n\n## compiled and interpreted, in one line each\n\n- compiled = translating a whole book once, then handing over the translated book.\n- interpreted = translating sentence by sentence out loud, every time someone reads it.\n\n`gcc hello.c -o hello` gives u a new file on the disk that u run by itself. `python3 hello.py` gives u nothing on the disk, only the result. bash is the second kind.\n\n## the shebang\n\n```bash\n#!/bin/bash\necho \"Hello World\"\n```\n\nthe first line tells the terminal which interpreter to use, so u can run it as `./hello.sh` instead of `bash hello.sh`.\n\n- careful: it has to be the **first** line. one empty line above it and it stops working.\n\n## export and .bashrc\n\n`var=\"value\"` is local and dies with that terminal. `export VAR=\"value\"` sends it to the environment so other scripts can see it.\n\nboth of them die when u close the terminal. `.bashrc` is the file that runs every time u open a new one, so anything u want to keep goes in there. same for aliases:\n\n```bash\nalias ..=\"cd ..\"\nalias ...=\"cd ../..\"\n```\n\n- note: after u change `.bashrc`, run `source ~/.bashrc` or the change only shows up in the next terminal u open.\n\n## and the answer\n\n```bash\necho $PATH\n```\n\n```\n/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/home/ati/.local/bin\n```\n\na list of folders, separated by `:`, searched left to right. that is why u type `ls` and not `/usr/bin/ls`.\n\nand the current folder is **not** in that list. that is the whole reason u write `./hello.sh`, the `./` is u saying \"look right here\".\n\n- careful: when u add to it, never drop the `$PATH:` part. `export PATH=/home/ati/my-programs` throws away every other folder and almost nothing works in that terminal anymore.\n\n> so `./` was never a rule to memorise. it is a list, and the current folder is not on it.\n\n[read chapter 7](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/07-scripts-env-path)",
+    "source": "auto"
+  },
+  {
     "id": "auto_terminal-101-06-text-editors_2026-08-30",
     "title": "terminal 101, chapter 6, one idea makes vim make sense",
     "date": "2026-08-30",
