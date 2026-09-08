@@ -1,5 +1,12 @@
 [
   {
+    "id": "auto_terminal-101-08-io-pipes-processes_2026-09-08",
+    "title": "terminal 101, chapter 8, the pipe is the best idea in the terminal",
+    "date": "2026-09-08",
+    "body": "# terminal 101, chapter 8, the pipe is the best idea in the terminal\n\nchapter 8 is the big one. exit codes, redirecting, the pipe, background jobs, killing things.\n\n## exit codes\n\n`0` means it worked, anything else means it did not. `$?` holds the code of the last command.\n\n```bash\nls ~\necho $?     # 0\n```\n\nit looks pointless right now. it is the thing `&&` is checking, so hold on to it.\n\n## sending output somewhere\n\n`>` writes to a file, `>>` adds to the end of it.\n\n- careful: this is the difference that costs people their files. `>` erases first and writes from zero, `>>` keeps what was there.\n\nand errors are a separate channel, so `2>` catches those. which means:\n\n```bash\necho \"hi\" 2> out.txt\n```\n\n`hi` still goes to ur screen and `out.txt` is empty, because `echo` succeeded and never used the error channel at all.\n\n## the pipe\n\n```bash\nls | grep \".txt\" | wc -l\n```\n\n```\n3\n```\n\nthe output of each one becomes the input of the next. `ls` lists, `grep` keeps the txt ones, `wc -l` counts the lines.\n\n> this is the single most useful idea in the whole terminal. small commands that each do one thing, and u chain them.\n\n## ; and && are not the same\n\n```bash\nmkdir practice ; cd practice     # cd runs even if mkdir failed\nmkdir practice && cd practice    # cd only runs if mkdir worked\n```\n\nand `&&` is literally checking the exit code from the top of this post. that is why u see it everywhere in install instructions, it is not decoration.\n\n## the 3 that get mixed up\n\n- `ctrl + c` kills it\n- `ctrl + z` **pauses** it\n- `&` runs it without blocking u\n\n`ctrl + z` is the one that catches people. it does not keep the program running, it freezes it. `bg` is what actually starts it moving again.\n\n> and if something is stuck for real, `ps aux | grep name` gives u the PID and `kill PID` ends it. that pipe again, doing real work.\n\n[read chapter 8](https://github.com/Mohamedattiadev/dev-101/tree/main/Terminal-101/08-io-pipes-processes)",
+    "source": "auto"
+  },
+  {
     "id": "auto_terminal-101-07-scripts-env-path_2026-09-04",
     "title": "terminal 101, chapter 7, why u have to write ./hello.sh",
     "date": "2026-09-04",
